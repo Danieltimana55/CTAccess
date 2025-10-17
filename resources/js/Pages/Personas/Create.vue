@@ -10,43 +10,43 @@
     </div>
 
     <!-- 🎉 Mensaje de Éxito Flotante -->
-    <transition
+    <Transition
       enter-active-class="transition ease-out duration-300"
-      enter-from-class="transform translate-y-[-100%] opacity-0"
-      enter-to-class="transform translate-y-0 opacity-100"
+      enter-from-class="opacity-0 translate-y-4"
+      enter-to-class="opacity-100 translate-y-0"
       leave-active-class="transition ease-in duration-200"
-      leave-from-class="transform translate-y-0 opacity-100"
-      leave-to-class="transform translate-y-[-100%] opacity-0"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-4"
     >
-      <div v-if="showSuccessMessage" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
-        <div class="bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-cyan-600 dark:to-cyan-700 text-white rounded-xl shadow-2xl border-2 border-white/20 overflow-hidden">
-          <div class="p-4 flex items-start gap-3">
+      <div v-if="showSuccessModal" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] max-w-md w-full mx-4">
+        <div class="bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-cyan-600 dark:to-cyan-700 text-white rounded-xl shadow-2xl border-2 border-white/20 overflow-hidden p-4">
+          <div class="flex items-start gap-3">
             <!-- Icono animado -->
             <div class="flex-shrink-0">
               <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
                 <Icon name="check-circle" :size="24" class="text-white" />
               </div>
             </div>
-            
+
             <!-- Contenido -->
             <div class="flex-1">
               <h4 class="font-bold text-base mb-1">¡Registro Exitoso!</h4>
-              <p class="text-sm text-white/90">{{ successMessage }}</p>
+              <p class="text-sm text-white/90">{{ $page.props.flash.success }}</p>
             </div>
-            
+
             <!-- Botón cerrar -->
-            <button @click="showSuccessMessage = false" class="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+            <button @click="closeSuccessModal" class="flex-shrink-0 text-white/80 hover:text-white transition-colors">
               <Icon name="x" :size="20" />
             </button>
           </div>
-          
+
           <!-- Barra de progreso -->
-          <div class="h-1 bg-white/20 overflow-hidden">
+          <div class="h-1 bg-white/20 overflow-hidden mt-3">
             <div class="h-full bg-white/60 animate-progress-bar"></div>
           </div>
         </div>
       </div>
-    </transition>
+    </Transition>
 
     <!-- Container principal centrado -->
     <div class="min-h-screen flex flex-col items-center justify-start py-4 sm:py-5 px-3 sm:px-4 lg:px-6">
@@ -386,7 +386,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import { useTheme } from '@/composables/useTheme'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 defineOptions({ layout: null })
 
@@ -394,29 +394,33 @@ const { isDark, toggleTheme } = useTheme()
 const currentStep = ref(1)
 const totalSteps = 4
 
-// Estado para el mensaje de éxito
-const showSuccessMessage = ref(false)
-const successMessage = ref('')
+// Estado para controlar la visibilidad del modal
+const showSuccessModal = ref(false)
 
-// Obtener flash messages de Laravel
+// Obtener las props de la página
 const page = usePage()
-const flash = computed(() => page.props.flash)
+
+// Función para cerrar el modal manualmente
+const closeSuccessModal = () => {
+  showSuccessModal.value = false
+}
 
 // Observar cambios en los mensajes flash
-watch(flash, (newFlash) => {
-  if (newFlash && newFlash.success) {
-    successMessage.value = newFlash.success
-    showSuccessMessage.value = true
-    
-    // Resetear el formulario
-    resetForm()
-    
-    // Ocultar el mensaje después de 5 segundos
+watch(() => page.props.flash?.success, (successMessage) => {
+  if (successMessage) {
+    showSuccessModal.value = true
+
+    // Resetear el formulario después de mostrar el mensaje
     setTimeout(() => {
-      showSuccessMessage.value = false
+      resetForm()
+    }, 500)
+
+    // Ocultar automáticamente después de 5 segundos
+    setTimeout(() => {
+      showSuccessModal.value = false
     }, 5000)
   }
-}, { deep: true, immediate: true })
+}, { immediate: true })
 
 const form = useForm({
   documento: '', nombre: '', tipoPersona: '', correo: '', portatiles: [], vehiculos: []
@@ -500,19 +504,60 @@ const submit = () => {
     alert('El nombre es obligatorio');
     return;
   }
-  
+
   if (!form.tipoPersona) {
     alert('Debe seleccionar un tipo de persona');
     return;
   }
 
+  console.log('📤 Enviando formulario...')
+
   form.post(route('personas.store'), {
-    onSuccess: (response) => {
-      console.log('Persona creada exitosamente:', response);
-      // El mensaje de éxito y reset se manejan automáticamente en el watcher
+    onSuccess: async (page) => {
+      console.log('✅ Persona creada exitosamente')
+      console.log('📄 Página recibida:', page)
+
+      // Mostrar mensaje de éxito manualmente usando reactive
+      modalState.message = '¡Registro exitoso! Persona creada correctamente.'
+
+      // Usar nextTick para asegurar que Vue actualice el DOM
+      await nextTick()
+      modalState.show = true
+
+      console.log('🎉 Modal activado - modalState.show:', modalState.show)
+      console.log('�� Mensaje:', modalState.message)
+
+      // Forzar actualización del DOM
+      await nextTick()
+
+      // Verificar si el elemento existe en el DOM - buscar por clase específica del modal
+      const modalElement = document.querySelector('.fixed.top-4.left-1\\/2')
+      console.log('🔍 Elemento del modal encontrado:', modalElement)
+      if (modalElement) {
+        console.log('✅ Modal está en el DOM con display:', window.getComputedStyle(modalElement).display)
+        console.log('✅ Clases del modal:', modalElement.className)
+      } else {
+        console.error('❌ Modal NO se encontró en el DOM')
+        // Buscar TODOS los elementos fixed
+        const allFixed = document.querySelectorAll('.fixed')
+        console.log('📋 Todos los elementos fixed encontrados:', allFixed.length)
+        allFixed.forEach((el, i) => {
+          console.log(`  ${i + 1}. ${el.className}`)
+        })
+      }
+
+      // Resetear el formulario después de un pequeño delay para que el usuario vea el mensaje
+      setTimeout(() => {
+        resetForm()
+      }, 500)
+
+      // Ocultar el mensaje después de 5 segundos
+      setTimeout(() => {
+        modalState.show = false
+      }, 5000)
     },
     onError: (errors) => {
-      console.error('Errores de validación:', errors);
+      console.error('❌ Errores de validación:', errors);
       if (errors.message && (errors.message.includes('CSRF') || errors.message.includes('expired'))) {
         window.location.reload();
         return;
@@ -522,8 +567,11 @@ const submit = () => {
         alert(`Error: ${firstError}`);
       }
     },
+    onFinish: () => {
+      console.log('🏁 Petición finalizada')
+    },
     preserveScroll: true,
-    preserveState: true,
+    preserveState: false, // Cambiado a false para que reciba el flash message
   })
 }
 </script>

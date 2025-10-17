@@ -72,6 +72,11 @@ class HandleInertiaRequests extends Middleware
             'menus' => [
                 'system' => $systemMenus,
             ],
+            'csrf_token' => csrf_token(), // 🔥 Compartir token CSRF actualizado en cada request
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
         ];
     }
 }

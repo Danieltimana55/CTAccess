@@ -7,8 +7,22 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import GlobalLoader from './Components/GlobalLoader.vue'; // 🔥 Loader Global
+import axios from 'axios';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+// 🔥 Interceptor global para manejar errores 419 (CSRF token expired)
+axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response && error.response.status === 419) {
+            console.warn('Token CSRF expirado. Recargando página...');
+            // Recargar la página para obtener un nuevo token CSRF
+            window.location.reload();
+        }
+        return Promise.reject(error);
+    }
+);
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -21,10 +35,10 @@ createInertiaApp({
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue);
-        
+
         // 🔥 Registrar GlobalLoader como componente global
         app.component('GlobalLoader', GlobalLoader);
-        
+
         return app.mount(el);
     },
     progress: {

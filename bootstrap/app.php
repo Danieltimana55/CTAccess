@@ -22,9 +22,25 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Envolver el grupo web con el manejador de errores CSRF
+        $middleware->web(prepend: [
+            \App\Http\Middleware\HandleCsrfErrors::class,
+        ]);
+
         // Alias middleware
         $middleware->alias([
             'check.system.role' => \App\Http\Middleware\CheckSystemRole::class,
+        ]);
+
+        // Configurar la prioridad del middleware de sesión
+        $middleware->priority([
+            \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+            \App\Http\Middleware\HandleCsrfErrors::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -70,8 +70,16 @@ class PersonaController extends Controller
         try {
             $persona = $this->service->createWithRelations($request->validated());
 
-            // 🔥 Disparar evento WebSocket para notificar registro en tiempo real
-            event(new \App\Events\PersonaRegistrada($persona));
+            // 🔥 Disparar evento WebSocket para notificar registro en tiempo real (no bloquear si falla)
+            try {
+                event(new \App\Events\PersonaRegistrada($persona));
+            } catch (\Throwable $broadcastEx) {
+                // Registrar error pero no interrumpir el flujo
+                Log::warning('Error disparando evento de broadcasting (Reverb no disponible)', [
+                    'persona_id' => $persona->idPersona,
+                    'error' => $broadcastEx->getMessage(),
+                ]);
+            }
 
             // Enviar email con el QR adjunto si hay correo (no bloquear en caso de error)
             if (!empty($persona->correo)) {

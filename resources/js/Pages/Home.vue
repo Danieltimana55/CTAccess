@@ -117,9 +117,9 @@ onMounted(() => {
         // Agregar al inicio de la actividad reciente
         recentActivity.value.unshift(newAccess)
 
-        // Mantener solo los últimos 15
-        if (recentActivity.value.length > 15) {
-          recentActivity.value = recentActivity.value.slice(0, 15)
+        // Mantener solo los últimos 3 para visualización limpia
+        if (recentActivity.value.length > 3) {
+          recentActivity.value = recentActivity.value.slice(0, 3)
         }
 
         // Quitar el marcador "isNew" después de 5 segundos
@@ -156,9 +156,9 @@ onMounted(() => {
         // Agregar al inicio de registros recientes
         recentRegistrations.value.unshift(newRegistration)
 
-        // Mantener solo los últimos 15
-        if (recentRegistrations.value.length > 15) {
-          recentRegistrations.value = recentRegistrations.value.slice(0, 15)
+        // Mantener solo los últimos 3 para visualización limpia
+        if (recentRegistrations.value.length > 3) {
+          recentRegistrations.value = recentRegistrations.value.slice(0, 3)
         }
 
         // Quitar el marcador "isNew" después de 5 segundos
@@ -172,12 +172,13 @@ onMounted(() => {
   }
 })
 
-// 🔥 Actividad en Tiempo Real con WebSockets
+// 🔥 Actividad en Tiempo Real con WebSockets - Solo mostrar últimos 3
 const fetchRecentActivity = async () => {
   try {
     const response = await fetch('/api/accesos/recientes')
     const data = await response.json()
-    recentActivity.value = data
+    // Limitar a solo 3 registros para una vista limpia
+    recentActivity.value = data.slice(0, 3)
     loadingActivity.value = false
   } catch (error) {
     console.error('Error fetching recent activity:', error)
@@ -185,12 +186,13 @@ const fetchRecentActivity = async () => {
   }
 }
 
-// 👥 Registros Recientes de Personas
+// 👥 Registros Recientes de Personas - Solo mostrar últimos 3
 const fetchRecentRegistrations = async () => {
   try {
     const response = await fetch('/api/personas/recientes')
     const data = await response.json()
-    recentRegistrations.value = data
+    // Limitar a solo 3 registros para una vista limpia
+    recentRegistrations.value = data.slice(0, 3)
     loadingRegistrations.value = false
   } catch (error) {
     console.error('Error fetching recent registrations:', error)
@@ -387,23 +389,23 @@ const handleLoginPressCancel = () => {
 
   <div class="min-h-screen bg-theme-primary text-theme-primary flex flex-col">
     <!-- Header fijo -->
-    <header class="bg-theme-navbar border-b border-theme-primary px-4 py-3 flex-shrink-0 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <header class="bg-theme-navbar border-b-2 border-theme-primary px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0 sticky top-0 z-50 shadow-lg">
+      <div class="max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-3">
         <!-- Logo -->
-        <div class="flex items-center gap-4">
-          <div class="relative">
-            <ApplicationLogo alt="CTAccess Logo" classes="h-12 w-auto object-contain" />
+        <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
+          <div class="relative flex-shrink-0">
+            <ApplicationLogo alt="CTAccess Logo" classes="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain" />
           </div>
 
-          <!-- Reloj Digital -->
+          <!-- Reloj Digital - Ahora visible en móviles con diseño compacto -->
           <div
-            class="hidden md:flex items-center gap-2 bg-theme-secondary border-2 border-theme-primary rounded-lg px-3 py-1.5 shadow-theme-md">
-            <Icon name="clock" :size="16" class="text-sena-green-600 dark:text-cyan-400" />
+            class="flex items-center gap-1.5 sm:gap-2 bg-theme-secondary border-2 border-theme-primary rounded-xl px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 shadow-theme-lg">
+            <Icon name="clock" :size="16" class="text-sena-green-600 dark:text-cyan-400 hidden sm:block lg:w-5 lg:h-5" />
             <div class="flex flex-col">
-              <div class="text-theme-primary font-bold text-sm tabular-nums leading-tight digital-clock">
+              <div class="text-theme-primary font-bold text-xs sm:text-sm lg:text-base tabular-nums leading-tight digital-clock">
                 {{ formatTime(currentTime) }}
               </div>
-              <div class="text-theme-muted text-[10px] font-medium uppercase leading-tight">
+              <div class="text-theme-muted text-[9px] sm:text-[10px] lg:text-xs font-medium uppercase leading-tight hidden xs:block">
                 {{ formatDate(currentTime) }}
               </div>
             </div>
@@ -411,24 +413,24 @@ const handleLoginPressCancel = () => {
         </div>
 
         <!-- Navegación -->
-        <nav class="flex gap-2 items-center">
+        <nav class="flex gap-2 sm:gap-2.5 lg:gap-3 items-center">
           <!-- Theme toggle button -->
           <button @click="toggleTheme"
-            class="rounded-md p-2 text-theme-muted hover:bg-theme-tertiary hover:text-theme-secondary focus:outline-none focus:ring-2 focus:ring-green-500"
+            class="rounded-lg p-2 sm:p-2.5 text-theme-muted hover:bg-theme-tertiary hover:text-theme-secondary focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200"
             :title="isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
-            <Icon :name="isDark ? 'sun' : 'moon'" :size="20" />
+            <Icon :name="isDark ? 'sun' : 'moon'" :size="18" class="sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
           </button>
 
           <template v-if="$page.props.auth && $page.props.auth.user">
             <Link :href="route('dashboard')"
-              class="flex items-center gap-2 px-3 py-2 text-theme-primary border border-theme-primary rounded-lg hover:bg-theme-tertiary transition-all duration-200">
-            <Icon name="home" :size="16" />
+              class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 text-theme-primary border-2 border-theme-primary rounded-xl hover:bg-theme-tertiary transition-all duration-200 text-sm sm:text-base font-medium shadow-theme-md hover:shadow-theme-lg">
+            <Icon name="home" :size="18" class="lg:w-5 lg:h-5" />
             <span class="hidden sm:inline">Panel</span>
             </Link>
           </template>
           <template v-else>
             <!-- 🔐 Botón con Toque Largo: Click normal = login usuarios | Mantener 3s = login sistema -->
-            <Link 
+            <Link
               :href="route('login')"
               @mousedown="handleLoginPressStart"
               @mouseup="handleLoginPressEnd"
@@ -437,39 +439,41 @@ const handleLoginPressCancel = () => {
               @touchend="handleLoginPressEnd"
               @touchcancel="handleLoginPressCancel"
               :class="[
-                'relative flex items-center gap-2 px-3 py-2 border rounded-lg transition-all duration-200 overflow-hidden select-none',
-                isLongPressing 
-                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300' 
+                'relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 border-2 rounded-xl transition-all duration-200 overflow-hidden select-none text-sm sm:text-base font-medium shadow-theme-md hover:shadow-theme-lg',
+                isLongPressing
+                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300'
                   : 'text-theme-primary border-theme-primary hover:bg-theme-tertiary'
               ]"
               :title="'Click normal: Iniciar sesión | Mantén presionado 3s: Acceso al Sistema (Admin/Celador)'">
-              
+
               <!-- Barra de progreso circular -->
-              <div 
-                v-if="isLongPressing" 
+              <div
+                v-if="isLongPressing"
                 class="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-amber-500/20 to-amber-600/20 dark:from-amber-500/30 dark:via-amber-400/30 dark:to-amber-300/30"
                 :style="{ width: `${longPressProgress}%` }"
               ></div>
-              
+
               <!-- Contenido del botón -->
-              <div class="relative z-10 flex items-center gap-2">
-                <Icon 
-                  :name="isLongPressing ? 'shield' : 'log-in'" 
-                  :size="16" 
+              <div class="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                <Icon
+                  :name="isLongPressing ? 'shield' : 'log-in'"
+                  :size="18"
+                  class="lg:w-5 lg:h-5"
                   :class="{ 'animate-pulse': isLongPressing }"
                 />
-                <span class="hidden sm:inline font-medium">
-                  {{ isLongPressing 
-                    ? `Sistema ${Math.floor(longPressProgress / 33)}...` 
-                    : 'Iniciar Sesión' 
+                <span class="hidden sm:inline">
+                  {{ isLongPressing
+                    ? `Sistema ${Math.floor(longPressProgress / 33)}...`
+                    : 'Iniciar Sesión'
                   }}
                 </span>
               </div>
             </Link>
             <Link :href="route('personas.create')"
-              class="flex items-center gap-2 px-4 py-2 bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg transition-all duration-200 font-medium shadow-theme-sm hover:shadow-theme-md">
-            <Icon name="user-plus" :size="16" />
-            Registrarse
+              class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl transition-all duration-200 font-semibold shadow-theme-lg hover:shadow-theme-xl text-sm sm:text-base">
+            <Icon name="user-plus" :size="18" class="lg:w-5 lg:h-5" />
+            <span class="hidden sm:inline">Registrarse</span>
+            <span class="sm:hidden">+</span>
             </Link>
           </template>
         </nav>
@@ -477,11 +481,11 @@ const handleLoginPressCancel = () => {
     </header>
 
     <!-- Contenido principal -->
-    <main class="flex-1 px-4 py-2">
-      <div class="max-w-7xl mx-auto flex flex-col">
+    <main class="flex-1 px-2 sm:px-4 lg:px-6 xl:px-8 py-3 sm:py-4 lg:py-6">
+      <div class="max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex flex-col">
 
-        <!-- 🎨 Stats Cubitos Animados - Solo Desktop -->
-        <div class="hidden lg:block w-full mb-6 mt-4 px-4 flex-shrink-0">
+        <!-- 🎨 Stats Cubitos Animados - Responsive para todas las pantallas -->
+        <div class="w-full mb-6 sm:mb-8 lg:mb-10 mt-4 sm:mt-6 px-1 sm:px-4 lg:px-6 flex-shrink-0">
           <div class="container-items">
             <button v-for="(stat, index) in statsData" :key="index" class="item-color"
               :class="{ 'active-color': activeColorIndex === index }" :style="{ '--color': stat.color }"
@@ -490,7 +494,9 @@ const handleLoginPressCancel = () => {
               <div class="item-inner">
                 <!-- Icono -->
                 <div class="icon-container">
-                  <Icon :name="stat.icon" :size="18" />
+                  <Icon :name="stat.icon" :size="16" class="sm:hidden" />
+                  <Icon :name="stat.icon" :size="20" class="hidden sm:block lg:hidden" />
+                  <Icon :name="stat.icon" :size="24" class="hidden lg:block" />
                 </div>
 
                 <!-- Datos que aparecen cuando está activo -->
@@ -503,301 +509,198 @@ const handleLoginPressCancel = () => {
           </div>
         </div>
 
-        <!-- Grid de Contenido -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- 📋 Sección de Tablas - Full Width, Solo 3 Registros Visibles -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
 
-          <!-- Columna 1: Actividad en Tiempo Real (2 columnas en large) -->
-          <div class="lg:col-span-2 relative flex-shrink-0">
+          <!-- 🔥 Actividad en Tiempo Real -->
+          <div class="relative flex-shrink-0">
             
-            <!-- �️ VERSIÓN DESKTOP - Título Diagonal -->
-            <div class="hidden lg:block relative w-full h-full">
-              <!-- Título Diagonal en Esquina -->
-              <div class="absolute -top-12 -left-6 z-10">
-                <div
-                  class="bg-sena-green-700 dark:bg-blue-900 px-6 py-3 rounded-xl shadow-theme-xl border-2 border-sena-green-600 dark:border-blue-800 transform -rotate-2 hover:rotate-0 transition-transform duration-300">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="w-9 h-9 bg-sena-green-600 dark:bg-blue-800 rounded-lg flex items-center justify-center relative">
-                      <Icon name="activity" :size="18" class="text-white" />
-                      <div
-                        class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-cyan-400 rounded-full border-2 border-sena-green-700 dark:border-blue-900 live-indicator">
-                      </div>
-                    </div>
-                    <div>
-                      <h3 class="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                        Actividad reciente
-                        <span class="text-xs font-normal text-gray-200 dark:text-cyan-200">{{ recentActivity.length }} registros</span>
-                      </h3>
-                    </div>
+            <!-- Card Compacta - Solo 3 registros, sin scroll -->
+            <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
+              <!-- Encabezado -->
+              <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center relative">
+                    <Icon name="activity" :size="18" class="text-white" />
+                    <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-cyan-400 rounded-full border-2 border-sena-green-700 dark:border-blue-900 live-indicator"></div>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-white">Actividad Reciente</h3>
+                    <p class="text-xs text-white/80">Últimos 3 accesos</p>
                   </div>
                 </div>
+                <span class="text-xs font-semibold text-white/90 bg-white/20 px-3 py-1 rounded-full">
+                  {{ recentActivity.length }}/3
+                </span>
               </div>
 
-              <!-- Contenedor de la Tabla Desktop -->
-              <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden mt-12 w-fit">
-                <!-- Feed de Registros Compacto con altura fija -->
-                <div class="p-2 bg-theme-secondary">
-                  <div class="space-y-1.5 h-[516px] overflow-y-auto custom-scrollbar pr-1">
+              <!-- Lista de Registros - Solo 3 visibles, sin scroll -->
+              <div class="p-3 sm:p-4 bg-theme-secondary">
+                <div class="space-y-2">
 
-                    <!-- Loading State -->
-                    <template v-if="loadingActivity">
-                      <div v-for="i in 4" :key="i"
-                        class="flex items-center gap-2 p-1.5 bg-theme-card border border-theme-primary rounded-lg animate-pulse w-fit min-w-[400px]">
-                        <div class="w-8 h-8 bg-theme-tertiary rounded-lg"></div>
-                        <div class="flex-1 space-y-1">
-                          <div class="h-2.5 bg-theme-tertiary rounded w-32"></div>
-                          <div class="h-2 bg-theme-tertiary rounded w-24"></div>
-                        </div>
-                        <div class="w-9 h-6 bg-theme-tertiary rounded"></div>
+                  <!-- Loading State - Solo 3 items -->
+                  <template v-if="loadingActivity">
+                    <div v-for="i in 3" :key="i"
+                      class="flex items-center gap-3 p-3 bg-theme-card border border-theme-primary rounded-lg animate-pulse">
+                      <div class="w-10 h-10 bg-theme-tertiary rounded-lg"></div>
+                      <div class="flex-1 space-y-2">
+                        <div class="h-3 bg-theme-tertiary rounded w-40"></div>
+                        <div class="h-2.5 bg-theme-tertiary rounded w-32"></div>
                       </div>
-                    </template>
+                      <div class="w-12 h-7 bg-theme-tertiary rounded"></div>
+                    </div>
+                  </template>
 
-                    <!-- Lista de Actividades -->
-                    <template v-else-if="recentActivity.length > 0">
-                      <transition-group name="spotlight">
-                        <div v-for="activity in recentActivity" :key="activity.id" :class="[
-                          'relative flex items-center gap-2 p-1.5 rounded-lg border-2 transition-all duration-500 w-fit min-w-[400px]',
-                          activity.isNew
-                            ? 'bg-sena-yellow-50 dark:bg-sena-yellow-900/20 border-sena-yellow-400 dark:border-sena-yellow-600 spotlight-card'
-                            : 'bg-theme-card border-theme-primary hover:border-theme-hover hover:shadow-theme-lg',
-                          'cursor-pointer group'
-                        ]">
+                  <!-- Lista de Actividades - Solo 3 registros -->
+                  <template v-else-if="recentActivity.length > 0">
+                    <transition-group name="spotlight" tag="div" class="space-y-2">
+                      <div v-for="activity in recentActivity" :key="activity.id" :class="[
+                        'relative flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-500',
+                        activity.isNew
+                          ? 'bg-sena-yellow-50 dark:bg-sena-yellow-900/20 border-sena-yellow-400 dark:border-sena-yellow-600 spotlight-card'
+                          : 'bg-theme-card border-theme-primary hover:border-theme-hover hover:shadow-theme-lg',
+                        'cursor-pointer group'
+                      ]">
                           <!-- Spotlight Effect para nuevos (4 esquinas brillantes) -->
                           <div v-if="activity.isNew" class="corner-spotlight top-left"></div>
                           <div v-if="activity.isNew" class="corner-spotlight top-right"></div>
                           <div v-if="activity.isNew" class="corner-spotlight bottom-left"></div>
                           <div v-if="activity.isNew" class="corner-spotlight bottom-right"></div>
 
-                          <!-- Avatar Mate con Icono -->
-                          <div class="relative flex-shrink-0">
-                            <div :class="[
-                              'w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold border-2 transition-all duration-300',
-                              activity.tipo === 'entrada'
-                                ? 'bg-sena-green-600 border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
-                                : 'bg-red-600 border-red-700 dark:bg-red-500 dark:border-red-600',
-                              activity.isNew ? 'scale-110 shake' : 'group-hover:scale-105'
-                            ]">
-                              <Icon :name="activity.tipo === 'entrada' ? 'log-in' : 'log-out'" :size="14" />
-                            </div>
-                            <!-- Notificación Badge Animado -->
-                            <div v-if="activity.isNew"
-                              class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-sena-yellow-400 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center notification-badge">
-                              <span class="text-[7px] font-black text-sena-yellow-900">!</span>
-                            </div>
+                        <!-- Avatar con Icono -->
+                        <div class="relative flex-shrink-0">
+                          <div :class="[
+                            'w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold border-2 transition-all duration-300',
+                            activity.tipo === 'entrada'
+                              ? 'bg-sena-green-600 border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
+                              : 'bg-red-600 border-red-700 dark:bg-red-500 dark:border-red-600',
+                            activity.isNew ? 'scale-110 shake' : 'group-hover:scale-105'
+                          ]">
+                            <Icon :name="activity.tipo === 'entrada' ? 'log-in' : 'log-out'" :size="18" />
                           </div>
-
-                          <!-- Información Compacta -->
-                          <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-1.5 mb-0.5">
-                              <p :class="[
-                                'font-bold text-[13px] truncate',
-                                activity.isNew ? 'text-sena-yellow-900 dark:text-sena-yellow-200' : 'text-theme-primary'
-                              ]">
-                                {{ activity.persona }}
-                              </p>
-                              <!-- Badge "NUEVO" llamativo -->
-                              <span v-if="activity.isNew"
-                                class="px-1.5 py-0.5 bg-sena-yellow-400 text-sena-yellow-900 text-[8px] font-black rounded uppercase tracking-wider border border-sena-yellow-500 blink-badge">
-                                ¡Nuevo!
-                              </span>
-                            </div>
-                            <div class="flex items-center gap-1.5 text-[10px]">
-                              <Icon name="credit-card" :size="9"
-                                :class="activity.isNew ? 'text-sena-yellow-700 dark:text-sena-yellow-400' : 'text-theme-muted'" />
-                              <span
-                                :class="activity.isNew ? 'text-sena-yellow-800 dark:text-sena-yellow-300 font-semibold' : 'text-theme-muted'">
-                                {{ activity.documento }}
-                              </span>
-                              <span class="text-theme-muted text-[8px]">•</span>
-                              <Icon name="clock" :size="9"
-                                :class="activity.isNew ? 'text-sena-yellow-700 dark:text-sena-yellow-400' : 'text-theme-muted'" />
-                              <span :class="[
-                                'font-semibold',
-                                activity.isNew ? 'text-sena-yellow-800 dark:text-sena-yellow-300' : 'text-theme-muted'
-                              ]">
-                                {{ formatRelativeTime(activity.tiempo) }}
-                              </span>
-                            </div>
+                          <!-- Badge Nuevo -->
+                          <div v-if="activity.isNew"
+                            class="absolute -top-1 -right-1 w-4 h-4 bg-sena-yellow-400 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center notification-badge">
+                            <span class="text-[8px] font-black text-sena-yellow-900">!</span>
                           </div>
-
-                          <!-- Badge de Estado Ultra Compacto -->
-                          <div class="flex-shrink-0">
-                            <div :class="[
-                              'px-1.5 py-0.5 rounded text-[9px] font-black uppercase border-2 transition-transform duration-300',
-                              activity.tipo === 'entrada'
-                                ? 'bg-sena-green-600 text-white border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
-                                : 'bg-red-600 text-white border-red-700 dark:bg-red-500 dark:border-red-600',
-                              'group-hover:scale-105'
-                            ]">
-                              <div class="flex items-center gap-0.5">
-                                <div :class="[
-                                  'w-1 h-1 rounded-full bg-white',
-                                  activity.isNew ? 'pulse-dot' : ''
-                                ]"></div>
-                                {{ activity.tipo === 'entrada' ? 'IN' : 'OUT' }}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </transition-group>
-                    </template>
-
-                    <!-- Empty State -->
-                    <template v-else>
-                      <div class="text-center py-12 text-theme-muted">
-                        <div
-                          class="w-14 h-14 mx-auto mb-3 bg-theme-tertiary rounded-xl flex items-center justify-center border-2 border-theme-primary">
-                          <Icon name="inbox" :size="28" class="opacity-40" />
-                        </div>
-                        <p class="text-sm font-bold">Sin actividad reciente</p>
-                        <p class="text-xs mt-1 opacity-70">Los accesos aparecerán aquí automáticamente</p>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 📱 VERSIÓN MÓVIL - Título Dentro y Compacta -->
-            <div class="lg:hidden">
-              <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-lg overflow-hidden">
-                <!-- Encabezado Compacto -->
-                <div class="bg-sena-green-600 dark:bg-blue-700 px-3 py-2.5 flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center relative">
-                      <Icon name="activity" :size="14" class="text-white" />
-                      <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-cyan-400 rounded-full border border-sena-green-700 dark:border-blue-900 live-indicator"></div>
-                    </div>
-                    <h3 class="text-sm font-bold text-white">Actividad reciente</h3>
-                  </div>
-                  <span class="text-xs font-medium text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
-                    {{ recentActivity.length }}
-                  </span>
-                </div>
-
-                <!-- Lista Compacta -->
-                <div class="p-2 bg-theme-secondary">
-                  <div class="space-y-1.5 max-h-[400px] overflow-y-auto custom-scrollbar">
-                    
-                    <!-- Loading State Móvil -->
-                    <template v-if="loadingActivity">
-                      <div v-for="i in 3" :key="i" class="flex items-center gap-2 p-2 bg-theme-card border border-theme-primary rounded-lg animate-pulse">
-                        <div class="w-7 h-7 bg-theme-tertiary rounded-lg"></div>
-                        <div class="flex-1 space-y-1">
-                          <div class="h-2 bg-theme-tertiary rounded w-24"></div>
-                          <div class="h-2 bg-theme-tertiary rounded w-16"></div>
-                        </div>
-                        <div class="w-8 h-5 bg-theme-tertiary rounded"></div>
-                      </div>
-                    </template>
-
-                    <!-- Lista de Actividades Móvil -->
-                    <template v-else-if="recentActivity.length > 0">
-                      <div v-for="activity in recentActivity.slice(0, 8)" :key="activity.id" :class="[
-                        'flex items-center gap-2 p-2 rounded-lg border transition-all duration-300',
-                        activity.isNew
-                          ? 'bg-sena-yellow-50 dark:bg-sena-yellow-900/20 border-sena-yellow-400 dark:border-sena-yellow-600'
-                          : 'bg-theme-card border-theme-primary hover:border-theme-hover'
-                      ]">
-                        <!-- Avatar Compacto -->
-                        <div :class="[
-                          'w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold border transition-all',
-                          activity.tipo === 'entrada'
-                            ? 'bg-sena-green-600 border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
-                            : 'bg-red-600 border-red-700 dark:bg-red-500 dark:border-red-600'
-                        ]">
-                          <Icon :name="activity.tipo === 'entrada' ? 'log-in' : 'log-out'" :size="12" />
                         </div>
 
                         <!-- Información -->
                         <div class="flex-1 min-w-0">
-                          <p :class="[
-                            'font-bold text-xs truncate',
-                            activity.isNew ? 'text-sena-yellow-900 dark:text-sena-yellow-200' : 'text-theme-primary'
-                          ]">
-                            {{ activity.persona }}
-                          </p>
-                          <div class="flex items-center gap-1 text-[10px] text-theme-muted">
-                            <Icon name="clock" :size="8" />
-                            <span>{{ formatRelativeTime(activity.tiempo) }}</span>
+                          <div class="flex items-center gap-2 mb-1">
+                            <p :class="[
+                              'font-bold text-sm truncate',
+                              activity.isNew ? 'text-sena-yellow-900 dark:text-sena-yellow-200' : 'text-theme-primary'
+                            ]">
+                              {{ activity.persona }}
+                            </p>
+                            <span v-if="activity.isNew"
+                              class="px-2 py-0.5 bg-sena-yellow-400 text-sena-yellow-900 text-[9px] font-black rounded uppercase tracking-wide border border-sena-yellow-500 blink-badge">
+                              ¡Nuevo!
+                            </span>
+                          </div>
+                          <div class="flex items-center gap-2 text-xs">
+                            <Icon name="credit-card" :size="11"
+                              :class="activity.isNew ? 'text-sena-yellow-700 dark:text-sena-yellow-400' : 'text-theme-muted'" />
+                            <span
+                              :class="activity.isNew ? 'text-sena-yellow-800 dark:text-sena-yellow-300 font-semibold' : 'text-theme-muted'">
+                              {{ activity.documento }}
+                            </span>
+                            <span class="text-theme-muted">•</span>
+                            <Icon name="clock" :size="11"
+                              :class="activity.isNew ? 'text-sena-yellow-700 dark:text-sena-yellow-400' : 'text-theme-muted'" />
+                            <span :class="[
+                              'font-semibold',
+                              activity.isNew ? 'text-sena-yellow-800 dark:text-sena-yellow-300' : 'text-theme-muted'
+                            ]">
+                              {{ formatRelativeTime(activity.tiempo) }}
+                            </span>
                           </div>
                         </div>
 
-                        <!-- Badge Estado -->
-                        <div :class="[
-                          'px-1.5 py-0.5 rounded text-[8px] font-black uppercase border',
-                          activity.tipo === 'entrada'
-                            ? 'bg-sena-green-600 text-white border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
-                            : 'bg-red-600 text-white border-red-700'
-                        ]">
-                          {{ activity.tipo === 'entrada' ? 'IN' : 'OUT' }}
+                        <!-- Badge de Estado -->
+                        <div class="flex-shrink-0">
+                          <div :class="[
+                            'px-3 py-1.5 rounded-lg text-[10px] font-black uppercase border-2 transition-transform duration-300',
+                            activity.tipo === 'entrada'
+                              ? 'bg-sena-green-600 text-white border-sena-green-700 dark:bg-cyan-600 dark:border-cyan-500'
+                              : 'bg-red-600 text-white border-red-700 dark:bg-red-500 dark:border-red-600',
+                            'group-hover:scale-105'
+                          ]">
+                            <div class="flex items-center gap-1">
+                              <div :class="[
+                                'w-1.5 h-1.5 rounded-full bg-white',
+                                activity.isNew ? 'pulse-dot' : ''
+                              ]"></div>
+                              {{ activity.tipo === 'entrada' ? 'IN' : 'OUT' }}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </template>
+                    </transition-group>
+                  </template>
 
-                    <!-- Empty State Móvil -->
-                    <template v-else>
-                      <div class="text-center py-8 text-theme-muted">
-                        <div class="w-12 h-12 mx-auto mb-2 bg-theme-tertiary rounded-lg flex items-center justify-center border border-theme-primary">
-                          <Icon name="inbox" :size="24" class="opacity-40" />
-                        </div>
-                        <p class="text-xs font-semibold">Sin actividad reciente</p>
+                  <!-- Empty State -->
+                  <template v-else>
+                    <div class="text-center py-8 text-theme-muted">
+                      <div
+                        class="w-16 h-16 mx-auto mb-3 bg-theme-tertiary rounded-xl flex items-center justify-center border-2 border-theme-primary">
+                        <Icon name="inbox" :size="32" class="opacity-40" />
                       </div>
-                    </template>
-                  </div>
+                      <p class="text-sm font-bold">Sin actividad reciente</p>
+                      <p class="text-xs mt-1 opacity-70">Los accesos aparecerán aquí automáticamente</p>
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
 
           </div>
 
-          <!-- Columna 3: Registros Recientes de Personas (1 columna en large) -->
-          <div class="lg:col-span-1 relative flex-shrink-0">
-            
-            <!-- VERSIÓN DESKTOP Y MÓVIL UNIFICADA -->
-            <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-lg overflow-hidden">
+          <!-- 👥 Registros Recientes de Personas -->
+          <div class="relative flex-shrink-0">
+            <!-- Card Compacta - Solo 3 registros, sin scroll -->
+            <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
               <!-- Encabezado -->
-              <div class="bg-purple-600 dark:bg-purple-700 px-3 py-2.5 lg:px-4 lg:py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 lg:w-8 lg:h-8 bg-purple-700 dark:bg-purple-800 rounded-lg flex items-center justify-center relative">
-                    <Icon name="user-plus" :size="14" class="text-white lg:hidden" />
-                    <Icon name="user-plus" :size="16" class="text-white hidden lg:block" />
-                    <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-yellow-400 rounded-full border border-purple-700 dark:border-purple-900 live-indicator"></div>
+              <div class="bg-purple-600 dark:bg-purple-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-purple-700 dark:bg-purple-800 rounded-lg flex items-center justify-center relative">
+                    <Icon name="user-plus" :size="18" class="text-white" />
+                    <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-yellow-400 rounded-full border-2 border-purple-700 dark:border-purple-900 live-indicator"></div>
                   </div>
                   <div>
-                    <h3 class="text-sm lg:text-base font-bold text-white">Registros</h3>
-                    <p class="text-[10px] text-white/70">Nuevas personas</p>
+                    <h3 class="text-base font-bold text-white">Registros</h3>
+                    <p class="text-xs text-white/80">Nuevas personas</p>
                   </div>
                 </div>
-                <span class="text-xs font-medium text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
-                  {{ recentRegistrations.length }}
+                <span class="text-xs font-semibold text-white/90 bg-white/20 px-3 py-1 rounded-full">
+                  {{ recentRegistrations.length }}/3
                 </span>
               </div>
 
-              <!-- Lista de Registros -->
-              <div class="p-2 bg-theme-secondary">
-                <div class="space-y-1.5 h-[516px] lg:h-[516px] overflow-y-auto custom-scrollbar pr-1">
-                  
-                  <!-- Loading State -->
+              <!-- Lista de Registros - Solo 3 visibles, sin scroll -->
+              <div class="p-3 sm:p-4 bg-theme-secondary">
+                <div class="space-y-2">
+                  <!-- Loading State - Solo 3 items -->
                   <template v-if="loadingRegistrations">
-                    <div v-for="i in 4" :key="i" class="flex items-center gap-2 p-2 bg-theme-card border border-theme-primary rounded-lg animate-pulse">
-                      <div class="w-8 h-8 bg-theme-tertiary rounded-lg"></div>
-                      <div class="flex-1 space-y-1">
+                    <div v-for="i in 3" :key="i" class="flex items-center gap-3 p-3 bg-theme-card border border-theme-primary rounded-lg animate-pulse">
+                      <div class="w-10 h-10 bg-theme-tertiary rounded-lg"></div>
+                      <div class="flex-1 space-y-2">
+                        <div class="h-3 bg-theme-tertiary rounded w-40"></div>
                         <div class="h-2.5 bg-theme-tertiary rounded w-32"></div>
-                        <div class="h-2 bg-theme-tertiary rounded w-24"></div>
                       </div>
-                      <div class="w-16 h-5 bg-theme-tertiary rounded"></div>
+                      <div class="w-12 h-7 bg-theme-tertiary rounded"></div>
                     </div>
                   </template>
 
-                  <!-- Lista de Registros -->
+                  <!-- Lista de Registros - Solo 3 registros -->
                   <template v-else-if="recentRegistrations.length > 0">
-                    <transition-group name="spotlight">
+                    <transition-group name="spotlight" tag="div" class="space-y-2">
                       <div v-for="registro in recentRegistrations" :key="registro.id" :class="[
-                        'relative flex items-center gap-2 p-2 rounded-lg border-2 transition-all duration-500',
+                        'relative flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-500',
                         registro.isNew
                           ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-400 dark:border-purple-600 spotlight-card'
-                          : 'bg-theme-card border-theme-primary hover:border-theme-hover hover:shadow-theme-md',
+                          : 'bg-theme-card border-theme-primary hover:border-theme-hover hover:shadow-theme-lg',
                         'cursor-pointer group'
                       ]">
                         <!-- Spotlight corners para nuevos -->
@@ -809,42 +712,41 @@ const handleLoginPressCancel = () => {
                         <!-- Avatar con Badge -->
                         <div class="relative flex-shrink-0">
                           <div :class="[
-                            'w-8 h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-white font-bold border-2 transition-all duration-300',
+                            'w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold border-2 transition-all duration-300',
                             'bg-purple-600 border-purple-700 dark:bg-purple-600 dark:border-purple-500',
                             registro.isNew ? 'scale-110 shake' : 'group-hover:scale-105'
                           ]">
-                            <Icon name="user" :size="14" class="lg:hidden" />
-                            <Icon name="user" :size="16" class="hidden lg:block" />
+                            <Icon name="user" :size="18" />
                           </div>
                           <div v-if="registro.isNew"
-                            class="absolute -top-0.5 -right-0.5 w-3 h-3 lg:w-3.5 lg:h-3.5 bg-yellow-400 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center notification-badge">
-                            <span class="text-[7px] font-black text-purple-900">!</span>
+                            class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center notification-badge">
+                            <span class="text-[8px] font-black text-purple-900">!</span>
                           </div>
                         </div>
 
                         <!-- Información -->
                         <div class="flex-1 min-w-0">
-                          <div class="flex items-center gap-1.5 mb-0.5">
+                          <div class="flex items-center gap-2 mb-1">
                             <p :class="[
-                              'font-bold text-xs lg:text-[13px] truncate',
+                              'font-bold text-sm truncate',
                               registro.isNew ? 'text-purple-900 dark:text-purple-200' : 'text-theme-primary'
                             ]">
                               {{ registro.nombre }}
                             </p>
                             <span v-if="registro.isNew"
-                              class="px-1.5 py-0.5 bg-yellow-400 text-purple-900 text-[8px] font-black rounded uppercase tracking-wider border border-yellow-500 blink-badge">
+                              class="px-2 py-0.5 bg-yellow-400 text-purple-900 text-[9px] font-black rounded uppercase tracking-wide border border-yellow-500 blink-badge">
                               ¡Nuevo!
                             </span>
                           </div>
-                          <div class="flex items-center gap-1.5 text-[10px]">
-                            <Icon name="briefcase" :size="9" 
+                          <div class="flex items-center gap-2 text-xs">
+                            <Icon name="briefcase" :size="11" 
                               :class="registro.isNew ? 'text-purple-700 dark:text-purple-400' : 'text-theme-muted'" />
                             <span
                               :class="registro.isNew ? 'text-purple-800 dark:text-purple-300 font-semibold' : 'text-theme-muted'">
                               {{ registro.tipo_persona }}
                             </span>
-                            <span class="text-theme-muted text-[8px]">•</span>
-                            <Icon name="clock" :size="9"
+                            <span class="text-theme-muted">•</span>
+                            <Icon name="clock" :size="11"
                               :class="registro.isNew ? 'text-purple-700 dark:text-purple-400' : 'text-theme-muted'" />
                             <span :class="[
                               'font-semibold',
@@ -858,13 +760,13 @@ const handleLoginPressCancel = () => {
                         <!-- Badge de tipo -->
                         <div class="flex-shrink-0">
                           <div :class="[
-                            'px-1.5 py-0.5 rounded text-[9px] font-black uppercase border-2 transition-transform duration-300',
+                            'px-3 py-1.5 rounded-lg text-[10px] font-black uppercase border-2 transition-transform duration-300',
                             'bg-purple-600 text-white border-purple-700 dark:bg-purple-600 dark:border-purple-500',
                             'group-hover:scale-105'
                           ]">
-                            <div class="flex items-center gap-0.5">
+                            <div class="flex items-center gap-1">
                               <div :class="[
-                                'w-1 h-1 rounded-full bg-white',
+                                'w-1.5 h-1.5 rounded-full bg-white',
                                 registro.isNew ? 'pulse-dot' : ''
                               ]"></div>
                               NEW
@@ -877,9 +779,9 @@ const handleLoginPressCancel = () => {
 
                   <!-- Empty State -->
                   <template v-else>
-                    <div class="text-center py-12 text-theme-muted">
-                      <div class="w-14 h-14 mx-auto mb-3 bg-theme-tertiary rounded-xl flex items-center justify-center border-2 border-theme-primary">
-                        <Icon name="user-plus" :size="28" class="opacity-40" />
+                    <div class="text-center py-8 text-theme-muted">
+                      <div class="w-16 h-16 mx-auto mb-3 bg-theme-tertiary rounded-xl flex items-center justify-center border-2 border-theme-primary">
+                        <Icon name="user-plus" :size="32" class="opacity-40" />
                       </div>
                       <p class="text-sm font-bold">Sin registros recientes</p>
                       <p class="text-xs mt-1 opacity-70">Los nuevos registros aparecerán aquí</p>
@@ -888,116 +790,119 @@ const handleLoginPressCancel = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- 📊 SECCIÓN DE GRÁFICOS ANALÍTICOS -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- 📊 SECCIÓN DE GRÁFICOS ANALÍTICOS - Debajo de las tablas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
           
           <!-- Gráfico 1: Accesos por Hora del Día -->
-          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
-            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
-                  <Icon name="trending-up" :size="16" class="text-white" />
+          <div class="bg-theme-card border border-theme-primary sm:border-2 rounded-lg sm:rounded-xl shadow-theme-lg sm:shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="trending-up" :size="14" class="text-white sm:hidden" />
+                  <Icon name="trending-up" :size="16" class="text-white hidden sm:block" />
                 </div>
-                <h3 class="text-sm font-bold text-white">Accesos por Hora (Hoy)</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-white">Accesos por Hora</h3>
               </div>
-              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span>Live</span>
+              <div class="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/80 bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span class="hidden sm:inline">Live</span>
               </div>
             </div>
-            <div class="p-4 bg-theme-secondary">
-              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+            <div class="p-2 sm:p-3 md:p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80 flex items-center justify-center">
                 <div class="text-center">
-                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
-                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-xs sm:text-sm text-theme-muted">Cargando datos...</p>
                 </div>
               </div>
-              <div v-else-if="chartData.accesosPorHora" class="h-64">
+              <div v-else-if="chartData.accesosPorHora" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80">
                 <LineChart :chartData="chartData.accesosPorHora" />
               </div>
             </div>
           </div>
 
           <!-- Gráfico 2: Comparativa Últimos 7 Días -->
-          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
-            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
-                  <Icon name="bar-chart-2" :size="16" class="text-white" />
+          <div class="bg-theme-card border border-theme-primary sm:border-2 rounded-lg sm:rounded-xl shadow-theme-lg sm:shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="bar-chart-2" :size="14" class="text-white sm:hidden" />
+                  <Icon name="bar-chart-2" :size="16" class="text-white hidden sm:block" />
                 </div>
-                <h3 class="text-sm font-bold text-white">Últimos 7 Días</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-white">Últimos 7 Días</h3>
               </div>
-              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span>Live</span>
+              <div class="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/80 bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span class="hidden sm:inline">Live</span>
               </div>
             </div>
-            <div class="p-4 bg-theme-secondary">
-              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+            <div class="p-2 sm:p-3 md:p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80 flex items-center justify-center">
                 <div class="text-center">
-                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
-                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-xs sm:text-sm text-theme-muted">Cargando datos...</p>
                 </div>
               </div>
-              <div v-else-if="chartData.ultimosSieteDias" class="h-64">
+              <div v-else-if="chartData.ultimosSieteDias" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80">
                 <BarChart :chartData="chartData.ultimosSieteDias" />
               </div>
             </div>
           </div>
 
           <!-- Gráfico 3: Distribución Hoy -->
-          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
-            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
-                  <Icon name="pie-chart" :size="16" class="text-white" />
+          <div class="bg-theme-card border border-theme-primary sm:border-2 rounded-lg sm:rounded-xl shadow-theme-lg sm:shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="pie-chart" :size="14" class="text-white sm:hidden" />
+                  <Icon name="pie-chart" :size="16" class="text-white hidden sm:block" />
                 </div>
-                <h3 class="text-sm font-bold text-white">Distribución de Hoy</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-white">Distribución de Hoy</h3>
               </div>
-              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span>Live</span>
+              <div class="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/80 bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span class="hidden sm:inline">Live</span>
               </div>
             </div>
-            <div class="p-4 bg-theme-secondary">
-              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+            <div class="p-2 sm:p-3 md:p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80 flex items-center justify-center">
                 <div class="text-center">
-                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
-                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-xs sm:text-sm text-theme-muted">Cargando datos...</p>
                 </div>
               </div>
-              <div v-else-if="chartData.distribucionHoy" class="h-64">
+              <div v-else-if="chartData.distribucionHoy" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80">
                 <DoughnutChart :chartData="chartData.distribucionHoy" />
               </div>
             </div>
           </div>
 
           <!-- Gráfico 4: Tendencia del Mes -->
-          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
-            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
-                  <Icon name="calendar" :size="16" class="text-white" />
+          <div class="bg-theme-card border border-theme-primary sm:border-2 rounded-lg sm:rounded-xl shadow-theme-lg sm:shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="calendar" :size="14" class="text-white sm:hidden" />
+                  <Icon name="calendar" :size="16" class="text-white hidden sm:block" />
                 </div>
-                <h3 class="text-sm font-bold text-white">Tendencia del Mes</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-white">Tendencia del Mes</h3>
               </div>
-              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
-                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span>Live</span>
+              <div class="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/80 bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span class="hidden sm:inline">Live</span>
               </div>
             </div>
-            <div class="p-4 bg-theme-secondary">
-              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+            <div class="p-2 sm:p-3 md:p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80 flex items-center justify-center">
                 <div class="text-center">
-                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
-                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-xs sm:text-sm text-theme-muted">Cargando datos...</p>
                 </div>
               </div>
-              <div v-else-if="chartData.tendenciaMes" class="h-64">
+              <div v-else-if="chartData.tendenciaMes" class="h-48 sm:h-56 md:h-64 xl:h-72 2xl:h-80">
                 <LineChart :chartData="chartData.tendenciaMes" />
               </div>
             </div>
@@ -1008,59 +913,66 @@ const handleLoginPressCancel = () => {
     </main>
 
     <!-- Footer Profesional Compacto -->
-    <footer class="bg-theme-navbar border-t-2 border-theme-primary px-4 py-6 flex-shrink-0 mt-auto">
-      <div class="max-w-7xl mx-auto">
+    <footer class="bg-theme-navbar border-t border-theme-primary sm:border-t-2 px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 flex-shrink-0 mt-auto">
+      <div class="max-w-[1920px] 2xl:max-w-[2400px] mx-auto">
         <!-- Contenido principal del footer -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-6 gap-4 sm:gap-6 xl:gap-8 mb-3 sm:mb-4">
 
           <!-- Columna 1: Información institucional -->
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 mb-2">
-              <ApplicationLogo alt="SENA Logo" classes="h-8 w-auto" />
+          <div class="space-y-1.5 sm:space-y-2 xl:col-span-2">
+            <div class="flex items-center gap-2 mb-1.5 sm:mb-2">
+              <ApplicationLogo alt="SENA Logo" classes="h-7 sm:h-8 w-auto" />
               <div>
-                <h3 class="text-theme-primary font-bold text-sm">CTAccess</h3>
-                <p class="text-theme-muted text-[10px]">Control de Acceso</p>
+                <h3 class="text-theme-primary font-bold text-xs sm:text-sm">CTAccess</h3>
+                <p class="text-theme-muted text-[9px] sm:text-[10px]">Control de Acceso</p>
               </div>
             </div>
-            <p class="text-theme-muted text-xs leading-relaxed">
+            <p class="text-theme-muted text-[11px] sm:text-xs leading-relaxed hidden sm:block">
               Sistema integral de control y gestión de accesos para el SENA.
               Seguridad, eficiencia y tecnología al servicio de la institución.
             </p>
-            <div class="flex items-center gap-2 text-xs">
-              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <p class="text-theme-muted text-[11px] leading-relaxed sm:hidden">
+              Control de accesos SENA
+            </p>
+            <div class="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
+              <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span class="text-theme-muted font-semibold">Sistema Operativo</span>
             </div>
           </div>
 
           <!-- Columna 2: Enlaces rápidos -->
-          <div class="space-y-2">
-            <h4 class="text-theme-primary font-bold text-sm mb-2 flex items-center gap-2">
-              <Icon name="link" :size="14" />
+          <div class="space-y-1.5 sm:space-y-2">
+            <h4 class="text-theme-primary font-bold text-xs sm:text-sm mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
+              <Icon name="link" :size="12" class="sm:hidden" />
+              <Icon name="link" :size="14" class="hidden sm:block" />
               Enlaces Rápidos
             </h4>
-            <nav class="space-y-2">
+            <nav class="space-y-1.5 sm:space-y-2">
               <Link :href="route('home')"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
-              <Icon name="home" :size="12" class="group-hover:scale-110 transition-transform" />
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group">
+              <Icon name="home" :size="11" class="group-hover:scale-110 transition-transform sm:hidden" />
+              <Icon name="home" :size="12" class="group-hover:scale-110 transition-transform hidden sm:block" />
               <span>Inicio</span>
               </Link>
               <Link v-if="$page.props.auth && $page.props.auth.user" :href="route('dashboard')"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
-              <Icon name="layout-dashboard" :size="12" class="group-hover:scale-110 transition-transform" />
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group">
+              <Icon name="layout-dashboard" :size="11" class="group-hover:scale-110 transition-transform sm:hidden" />
+              <Icon name="layout-dashboard" :size="12" class="group-hover:scale-110 transition-transform hidden sm:block" />
               <span>Panel de Control</span>
               </Link>
               <Link :href="route('personas.create')"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
-              <Icon name="user-plus" :size="12" class="group-hover:scale-110 transition-transform" />
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group">
+              <Icon name="user-plus" :size="11" class="group-hover:scale-110 transition-transform sm:hidden" />
+              <Icon name="user-plus" :size="12" class="group-hover:scale-110 transition-transform hidden sm:block" />
               <span>Registro</span>
               </Link>
               <a href="#"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group hidden sm:flex">
                 <Icon name="help-circle" :size="12" class="group-hover:scale-110 transition-transform" />
                 <span>Ayuda y Soporte</span>
               </a>
               <a href="#"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group hidden sm:flex">
                 <Icon name="book-open" :size="12" class="group-hover:scale-110 transition-transform" />
                 <span>Documentación</span>
               </a>
@@ -1068,28 +980,31 @@ const handleLoginPressCancel = () => {
           </div>
 
           <!-- Columna 3: Contacto -->
-          <div class="space-y-2">
-            <h4 class="text-theme-primary font-bold text-sm mb-2 flex items-center gap-2">
-              <Icon name="mail" :size="14" />
+          <div class="space-y-1.5 sm:space-y-2">
+            <h4 class="text-theme-primary font-bold text-xs sm:text-sm mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
+              <Icon name="mail" :size="12" class="sm:hidden" />
+              <Icon name="mail" :size="14" class="hidden sm:block" />
               Contacto
             </h4>
-            <div class="space-y-2">
-              <div class="flex items-start gap-2">
-                <Icon name="building-2" :size="14" class="text-theme-muted mt-0.5 flex-shrink-0" />
+            <div class="space-y-1.5 sm:space-y-2">
+              <div class="flex items-start gap-1.5 sm:gap-2 hidden sm:flex">
+                <Icon name="building-2" :size="12" class="text-theme-muted mt-0.5 flex-shrink-0 sm:hidden" />
+                <Icon name="building-2" :size="14" class="text-theme-muted mt-0.5 flex-shrink-0 hidden sm:block" />
                 <div>
-                  <p class="text-theme-primary font-semibold text-xs">SENA</p>
-                  <p class="text-theme-muted text-[11px]">Servicio Nacional de Aprendizaje</p>
+                  <p class="text-theme-primary font-semibold text-[11px] sm:text-xs">SENA</p>
+                  <p class="text-theme-muted text-[10px] sm:text-[11px]">Servicio Nacional de Aprendizaje</p>
                 </div>
               </div>
               <a href="mailto:ctaccesscqta@gmail.com"
-                class="flex items-start gap-2 text-theme-muted hover:text-blue-500 text-xs transition-colors duration-200 group">
-                <Icon name="mail" :size="14" class="mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                class="flex items-start gap-1.5 sm:gap-2 text-theme-muted hover:text-blue-500 text-[11px] sm:text-xs transition-colors duration-200 group">
+                <Icon name="mail" :size="12" class="mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform sm:hidden" />
+                <Icon name="mail" :size="14" class="mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform hidden sm:block" />
                 <div>
                   <p class="font-medium">Soporte Técnico</p>
-                  <p class="text-[11px] break-all">ctaccesscqta@gmail.com</p>
+                  <p class="text-[10px] sm:text-[11px] break-all">ctaccesscqta@gmail.com</p>
                 </div>
               </a>
-              <div class="flex items-start gap-2 text-theme-muted text-xs">
+              <div class="flex items-start gap-1.5 sm:gap-2 text-theme-muted text-[11px] sm:text-xs hidden sm:flex">
                 <Icon name="clock" :size="14" class="mt-0.5 flex-shrink-0" />
                 <div>
                   <p class="font-medium">Horario de Atención</p>
@@ -1100,41 +1015,43 @@ const handleLoginPressCancel = () => {
           </div>
 
           <!-- Columna 4: Legal y Versión -->
-          <div class="space-y-2">
-            <h4 class="text-theme-primary font-bold text-sm mb-2 flex items-center gap-2">
-              <Icon name="shield-check" :size="14" />
+          <div class="space-y-1.5 sm:space-y-2">
+            <h4 class="text-theme-primary font-bold text-xs sm:text-sm mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
+              <Icon name="shield-check" :size="12" class="sm:hidden" />
+              <Icon name="shield-check" :size="14" class="hidden sm:block" />
               Información Legal
             </h4>
-            <nav class="space-y-2">
+            <nav class="space-y-1.5 sm:space-y-2">
               <a href="#"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group hidden sm:flex">
                 <Icon name="file-text" :size="12" class="group-hover:scale-110 transition-transform" />
                 <span>Términos y Condiciones</span>
               </a>
               <a href="#"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group hidden sm:flex">
                 <Icon name="lock" :size="12" class="group-hover:scale-110 transition-transform" />
                 <span>Política de Privacidad</span>
               </a>
               <a href="#"
-                class="flex items-center gap-2 text-theme-muted hover:text-theme-primary text-xs transition-colors duration-200 group">
+                class="flex items-center gap-1.5 sm:gap-2 text-theme-muted hover:text-theme-primary text-[11px] sm:text-xs transition-colors duration-200 group hidden sm:flex">
                 <Icon name="shield" :size="12" class="group-hover:scale-110 transition-transform" />
                 <span>Política de Datos</span>
               </a>
             </nav>
 
             <!-- Info de versión -->
-            <div class="mt-2 p-2 bg-theme-secondary border border-theme-primary rounded-lg">
-              <div class="flex items-center gap-2 mb-2">
-                <Icon name="code" :size="14" class="text-blue-500" />
-                <span class="text-theme-primary font-semibold text-xs">Versión del Sistema</span>
+            <div class="mt-1.5 sm:mt-2 p-1.5 sm:p-2 bg-theme-secondary border border-theme-primary rounded-lg">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                <Icon name="code" :size="12" class="text-blue-500 sm:hidden" />
+                <Icon name="code" :size="14" class="text-blue-500 hidden sm:block" />
+                <span class="text-theme-primary font-semibold text-[11px] sm:text-xs">Versión del Sistema</span>
               </div>
-              <div class="space-y-1">
-                <div class="flex items-center justify-between text-[11px]">
+              <div class="space-y-0.5 sm:space-y-1">
+                <div class="flex items-center justify-between text-[10px] sm:text-[11px]">
                   <span class="text-theme-muted">Versión:</span>
                   <span class="text-theme-primary font-bold">v{{ sistema_info?.version || '1.0' }}</span>
                 </div>
-                <div class="flex items-center justify-between text-[11px]">
+                <div class="flex items-center justify-between text-[10px] sm:text-[11px]">
                   <span class="text-theme-muted">Última actualización:</span>
                   <span class="text-theme-primary font-mono">{{ sistema_info?.ultima_actualizacion || '2025-10-13'
                     }}</span>
@@ -1145,40 +1062,45 @@ const handleLoginPressCancel = () => {
         </div>
 
         <!-- Separador -->
-        <div class="border-t border-theme-primary my-4"></div>
+        <div class="border-t border-theme-primary my-2.5 sm:my-4"></div>
 
         <!-- Footer bottom -->
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4">
           <!-- Copyright -->
-          <div class="flex items-center gap-2 text-xs text-theme-muted">
-            <Icon name="copyright" :size="14" />
+          <div class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-theme-muted text-center sm:text-left">
+            <Icon name="copyright" :size="12" class="sm:hidden" />
+            <Icon name="copyright" :size="14" class="hidden sm:block" />
             <span>{{ new Date().getFullYear() }} <strong class="text-theme-primary">SENA</strong> - Todos los derechos
               reservados</span>
           </div>
 
           <!-- Desarrollado por -->
-          <div class="flex items-center gap-2 text-xs text-theme-muted">
-            <Icon name="heart" :size="14" class="text-red-500" />
-            <span>Desarrollado con</span>
-            <span class="text-theme-primary font-semibold">Laravel + Vue.js + Inertia</span>
+          <div class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-theme-muted text-center">
+            <Icon name="heart" :size="12" class="text-red-500 sm:hidden" />
+            <Icon name="heart" :size="14" class="text-red-500 hidden sm:block" />
+            <span class="hidden sm:inline">Desarrollado con</span>
+            <span class="text-theme-primary font-semibold">Laravel + Vue + Inertia</span>
           </div>
 
           <!-- Redes sociales -->
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 sm:gap-3">
             <a href="https://www.sena.edu.co" target="_blank"
-              class="w-8 h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-blue-500 hover:border-blue-500 transition-all duration-200 hover:scale-110"
+              class="w-7 h-7 sm:w-8 sm:h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-blue-500 hover:border-blue-500 transition-all duration-200 hover:scale-110"
               title="Sitio web SENA">
-              <Icon name="globe" :size="16" />
+              <Icon name="globe" :size="14" class="sm:hidden" />
+              <Icon name="globe" :size="16" class="hidden sm:block" />
             </a>
             <a href="mailto:ctaccesscqta@gmail.com"
-              class="w-8 h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-red-500 hover:border-red-500 transition-all duration-200 hover:scale-110"
+              class="w-7 h-7 sm:w-8 sm:h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-red-500 hover:border-red-500 transition-all duration-200 hover:scale-110"
               title="Enviar email">
-              <Icon name="mail" :size="16" />
+              <Icon name="mail" :size="14" class="sm:hidden" />
+              <Icon name="mail" :size="16" class="hidden sm:block" />
             </a>
             <a href="#"
-              class="w-8 h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-green-500 hover:border-green-500 transition-all duration-200 hover:scale-110"
+              class="w-7 h-7 sm:w-8 sm:h-8 bg-theme-secondary border border-theme-primary rounded-lg flex items-center justify-center text-theme-muted hover:text-green-500 hover:border-green-500 transition-all duration-200 hover:scale-110"
               title="Soporte técnico">
-              <Icon name="life-buoy" :size="16" />
+              <Icon name="life-buoy" :size="14" class="sm:hidden" />
+              <Icon name="life-buoy" :size="16" class="hidden sm:block" />
             </a>
           </div>
         </div>
@@ -1191,168 +1113,148 @@ const handleLoginPressCancel = () => {
 </template>
 
 <style scoped>
-/* ⚡ ANIMACIÓN SPOTLIGHT - Efecto super llamativo para registros nuevos */
+/* ⚡ ANIMACIÓN SPOTLIGHT - Efecto optimizado para registros nuevos */
 .spotlight-enter-active {
-  animation: spotlightEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: spotlightEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .spotlight-leave-active {
-  animation: spotlightExit 0.5s ease-in-out;
+  animation: spotlightExit 0.4s ease-out;
   position: absolute;
   width: 100%;
 }
 
 .spotlight-move {
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 🎬 Entrada dramática con zoom y rotación */
+/* 🎬 Entrada optimizada con transición suave */
 @keyframes spotlightEntrance {
   0% {
     opacity: 0;
-    transform: translateX(150px) scale(0.3) rotate(15deg);
-    filter: brightness(3);
+    transform: translateY(-20px) scale(0.95);
   }
 
-  50% {
-    transform: translateX(-20px) scale(1.15) rotate(-2deg);
-    filter: brightness(1.5);
-  }
-
-  70% {
-    transform: translateX(5px) scale(0.95) rotate(1deg);
+  60% {
+    transform: translateY(5px) scale(1.02);
   }
 
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1) rotate(0);
-    filter: brightness(1);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes spotlightExit {
-  from {
+  0% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 
-  to {
+  100% {
     opacity: 0;
-    transform: scale(0.8) translateX(-50px);
+    transform: translateY(-15px) scale(0.9);
   }
 }
 
-/* 🎯 Spotlight Card - Efecto de reflector en las 4 esquinas */
+/* 🎯 Spotlight Card - Efecto de brillo optimizado */
 .spotlight-card {
-  animation: cardPulse 2s ease-in-out infinite;
+  animation: cardPulse 2.5s ease-in-out infinite;
   position: relative;
 }
 
 @keyframes cardPulse {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 rgba(253, 195, 0, 0.5),
-      0 8px 24px -4px rgba(253, 195, 0, 0.3);
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(253, 195, 0, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 30px rgba(253, 195, 0, 0.6),
-      0 12px 32px -4px rgba(253, 195, 0, 0.4);
+    box-shadow: 0 0 25px rgba(253, 195, 0, 0.6);
   }
 }
 
-/* 💡 Corner Spotlights - Luces en las esquinas */
+/* 💡 Corner Spotlights - Optimizado para mejor rendimiento */
 .corner-spotlight {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   background: #FDC300;
   opacity: 0;
-  animation: cornerFlash 1.5s ease-in-out infinite;
+  animation: cornerFlash 2s ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
 .corner-spotlight.top-left {
-  top: -2px;
-  left: -2px;
+  top: -1px;
+  left: -1px;
   border-radius: 0 0 100% 0;
   animation-delay: 0s;
 }
 
 .corner-spotlight.top-right {
-  top: -2px;
-  right: -2px;
+  top: -1px;
+  right: -1px;
   border-radius: 0 0 0 100%;
-  animation-delay: 0.3s;
+  animation-delay: 0.4s;
 }
 
 .corner-spotlight.bottom-left {
-  bottom: -2px;
-  left: -2px;
+  bottom: -1px;
+  left: -1px;
   border-radius: 0 100% 0 0;
-  animation-delay: 0.6s;
+  animation-delay: 0.8s;
 }
 
 .corner-spotlight.bottom-right {
-  bottom: -2px;
-  right: -2px;
+  bottom: -1px;
+  right: -1px;
   border-radius: 100% 0 0 0;
-  animation-delay: 0.9s;
+  animation-delay: 1.2s;
 }
 
 @keyframes cornerFlash {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0;
     transform: scale(0);
   }
 
   50% {
-    opacity: 0.8;
+    opacity: 0.7;
     transform: scale(1);
   }
 }
 
-/* � Notification Badge - Badge amarillo animado */
+/* 🔔 Notification Badge - Badge animado optimizado */
 .notification-badge {
-  animation: badgeBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 3;
+  animation: badgeBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 2;
 }
 
 @keyframes badgeBounce {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1) rotate(0deg);
   }
 
-  25% {
-    transform: scale(1.3) rotate(-10deg);
-  }
-
-  75% {
-    transform: scale(1.3) rotate(10deg);
+  50% {
+    transform: scale(1.2) rotate(-8deg);
   }
 }
 
-/* 🌀 Shake Animation - Avatar temblando */
+/* 🌀 Shake Animation - Optimizado */
 .shake {
-  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) 3;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2;
 }
 
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0) scale(1.1);
+  0%, 100% {
+    transform: translateX(0) scale(1);
   }
 
   25% {
-    transform: translateX(-5px) rotate(-5deg) scale(1.15);
+    transform: translateX(-3px) rotate(-3deg) scale(1.05);
   }
 
   75% {
-    transform: translateX(5px) rotate(5deg) scale(1.15);
+    transform: translateX(3px) rotate(3deg) scale(1.05);
   }
 }
 
@@ -1463,67 +1365,106 @@ const handleLoginPressCancel = () => {
   font-variant-numeric: tabular-nums;
 }
 
-/* 📜 Custom Scrollbar - Mate y moderno */
+/* 📜 Custom Scrollbar - Oculto para diseño limpio */
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #3b82f6 transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  display: none;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-}
-
-/* 🎨 Hover effects para cards */
+/* 🎨 Hover effects para cards - Sutil y elegante */
 .group:hover {
-  transform: translateY(-2px);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ✨ Transiciones suaves globales */
-* {
-  transition-property: transform, background-color, border-color, box-shadow, opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
+  transform: translateY(-1px);
+  transition: all 0.2s ease-out;
 }
 
 /* 🎨 Stats Cubitos Animados - Diseño Mejorado */
 .container-items {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  gap: 8px;
-  padding: 0 12px;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+@media (min-width: 640px) {
+  .container-items {
+    gap: 8px;
+    padding: 0 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-items {
+    gap: 12px;
+    padding: 0 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-items {
+    gap: 14px;
+    padding: 0 20px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-items {
+    gap: 16px;
+    padding: 0 24px;
+  }
 }
 
 .item-color {
   position: relative;
   flex: 1;
-  height: 50px;
-  min-width: 50px;
+  height: 40px;
+  min-width: 40px;
+  max-width: 120px;
   border: none;
   outline: none;
   cursor: pointer;
   background: transparent;
   overflow: visible;
-  transition: all 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: flex 400ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 300ms ease;
+}
+
+@media (min-width: 640px) {
+  .item-color {
+    height: 50px;
+    min-width: 50px;
+    max-width: 140px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .item-color {
+    height: 60px;
+    min-width: 60px;
+    max-width: 160px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .item-color {
+    height: 70px;
+    min-width: 70px;
+    max-width: 180px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .item-color {
+    height: 75px;
+    min-width: 75px;
+    max-width: 200px;
+  }
 }
 
 /* Contenedor interno - Fondo del cubito */
@@ -1536,12 +1477,45 @@ const handleLoginPressCancel = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0 12px;
+  gap: 6px;
+  padding: 0 8px;
   opacity: 0.5;
   filter: grayscale(0.6) brightness(0.7) saturate(0.8);
-  transition: all 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  will-change: opacity, filter, box-shadow, transform;
+}
+
+@media (min-width: 640px) {
+  .item-inner {
+    border-radius: 10px;
+    gap: 8px;
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .item-inner {
+    border-radius: 12px;
+    gap: 10px;
+    padding: 0 14px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .item-inner {
+    border-radius: 14px;
+    gap: 12px;
+    padding: 0 16px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .item-inner {
+    border-radius: 16px;
+    gap: 14px;
+    padding: 0 18px;
+  }
 }
 
 /* Modo claro - Cubitos más oscuros y mates */
@@ -1565,7 +1539,7 @@ const handleLoginPressCancel = () => {
   justify-content: center;
   color: #ffffff;
   flex-shrink: 0;
-  transition: all 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
@@ -1594,26 +1568,78 @@ const handleLoginPressCancel = () => {
   opacity: 0;
   width: 0;
   overflow: hidden;
-  transition: all 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: opacity 400ms ease-out, width 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
 }
 
 .stat-value {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 900;
   line-height: 1;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4),
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5),
                0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+@media (min-width: 640px) {
+  .stat-value {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stat-value {
+    font-size: 19px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .stat-value {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .stat-value {
+    font-size: 24px;
+  }
+}
+
 .stat-label {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   line-height: 1.2;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   opacity: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 640px) {
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 0.7px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.9px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 1.1px;
+  }
 }
 
 /* Animación de levitación para los datos */
@@ -1632,17 +1658,46 @@ const handleLoginPressCancel = () => {
 
 /* Estado activo - Se expande horizontalmente */
 .item-color.active-color {
-  flex: 2.5;
+  flex: 2.2;
   z-index: 50;
+  transform: scale(1.05);
+}
+
+@media (min-width: 640px) {
+  .item-color.active-color {
+    flex: 2.5;
+    transform: scale(1.05);
+  }
+}
+
+@media (min-width: 1024px) {
+  .item-color.active-color {
+    flex: 2.8;
+    transform: scale(1.08);
+  }
+}
+
+@media (min-width: 1280px) {
+  .item-color.active-color {
+    flex: 3;
+    transform: scale(1.08);
+  }
+}
+
+@media (min-width: 1536px) {
+  .item-color.active-color {
+    flex: 3.2;
+    transform: scale(1.1);
+  }
 }
 
 .item-color.active-color .item-inner {
   opacity: 1;
   filter: grayscale(0) brightness(1) saturate(1);
-  box-shadow: 0 8px 24px -4px var(--color),
-    0 0 40px -8px var(--color),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px -4px var(--color),
+    0 0 50px -10px var(--color),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.35);
 }
 
 /* Modo claro - Estado activo más oscuro y mate, sin brillo excesivo */
@@ -1668,14 +1723,38 @@ const handleLoginPressCancel = () => {
 .item-color.active-color .stat-data {
   opacity: 1;
   width: auto;
-  padding-left: 8px;
+  padding-left: 6px;
+}
+
+@media (min-width: 640px) {
+  .item-color.active-color .stat-data {
+    padding-left: 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .item-color.active-color .stat-data {
+    padding-left: 10px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .item-color.active-color .stat-data {
+    padding-left: 12px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .item-color.active-color .stat-data {
+    padding-left: 14px;
+  }
 }
 
 /* Hover suave en todos los cubitos */
 .item-color:hover .item-inner {
-  opacity: 0.6;
-  filter: grayscale(0.5) brightness(0.8) saturate(0.85);
-  transform: translateY(-2px);
+  opacity: 0.7;
+  filter: grayscale(0.4) brightness(0.85) saturate(0.9);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .item-color.active-color:hover .item-inner {
@@ -1685,70 +1764,129 @@ const handleLoginPressCancel = () => {
 
 /* Modo claro - Hover más oscuro para mejor visibilidad */
 :not(.dark) .item-color:hover .item-inner {
-  opacity: 0.65;
-  filter: grayscale(0.5) brightness(0.8) saturate(0.9);
-  transform: translateY(-1px);
+  opacity: 0.7;
+  filter: grayscale(0.4) brightness(0.85) saturate(0.95);
+  transform: translateY(-2px) scale(1.02);
 }
 
 :not(.dark) .item-color.active-color:hover .item-inner {
   opacity: 1;
-  filter: grayscale(0) brightness(0.9) saturate(1.05);
-  transform: translateY(-1px);
+  filter: grayscale(0) brightness(0.95) saturate(1.05);
+  transform: translateY(-2px);
 }
 
 /* Modo oscuro - Hover más claro y brillante */
 .dark .item-color:hover .item-inner {
-  opacity: 0.75;
-  filter: grayscale(0.4) brightness(1) saturate(1);
-  transform: translateY(-2px);
+  opacity: 0.8;
+  filter: grayscale(0.3) brightness(1.05) saturate(1.05);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .dark .item-color.active-color:hover .item-inner {
   opacity: 1;
-  filter: grayscale(0) brightness(1.2) saturate(1.15);
+  filter: grayscale(0) brightness(1.25) saturate(1.2);
   transform: translateY(-2px);
 }
 
-/* Responsivo */
-@media (max-width: 1024px) {
+/* Mejoras adicionales para móviles muy pequeños */
+@media (max-width: 375px) {
   .container-items {
-    gap: 6px;
+    gap: 2px;
+    padding: 0 2px;
   }
 
   .item-color {
-    min-width: 45px;
-    height: 45px;
-  }
-
-  .stat-value {
-    font-size: 14px;
-  }
-
-  .stat-label {
-    font-size: 8px;
-  }
-}
-
-@media (max-width: 768px) {
-  .container-items {
-    gap: 4px;
-  }
-
-  .item-color {
-    min-width: 40px;
-    height: 40px;
+    min-width: 30px;
+    height: 32px;
   }
 
   .item-inner {
-    padding: 0 8px;
+    border-radius: 5px;
+    padding: 0 4px;
   }
 
   .stat-value {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .stat-label {
-    font-size: 7px;
+    font-size: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .item-color.active-color {
+    flex: 1.8;
+  }
+}
+
+/* 🖥️ Optimizaciones para pantallas ultra-anchas y 4K */
+@media (min-width: 1920px) {
+  .container-items {
+    gap: 14px;
+    padding: 0 24px;
+  }
+
+  .item-color {
+    height: 70px;
+    min-width: 70px;
+  }
+
+  .item-inner {
+    border-radius: 14px;
+    gap: 14px;
+    padding: 0 18px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 1.1px;
+  }
+
+  .item-color.active-color {
+    flex: 3.2;
+  }
+
+  .item-color.active-color .stat-data {
+    padding-left: 14px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .container-items {
+    gap: 16px;
+    padding: 0 32px;
+  }
+
+  .item-color {
+    height: 80px;
+    min-width: 80px;
+  }
+
+  .item-inner {
+    border-radius: 16px;
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    letter-spacing: 1.2px;
+  }
+
+  .item-color.active-color {
+    flex: 3.5;
+  }
+
+  .item-color.active-color .stat-data {
+    padding-left: 16px;
   }
 }
 
