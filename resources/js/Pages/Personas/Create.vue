@@ -9,6 +9,45 @@
       </button>
     </div>
 
+    <!-- 🎉 Mensaje de Éxito Flotante -->
+    <transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform translate-y-[-100%] opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform translate-y-[-100%] opacity-0"
+    >
+      <div v-if="showSuccessMessage" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+        <div class="bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-cyan-600 dark:to-cyan-700 text-white rounded-xl shadow-2xl border-2 border-white/20 overflow-hidden">
+          <div class="p-4 flex items-start gap-3">
+            <!-- Icono animado -->
+            <div class="flex-shrink-0">
+              <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
+                <Icon name="check-circle" :size="24" class="text-white" />
+              </div>
+            </div>
+            
+            <!-- Contenido -->
+            <div class="flex-1">
+              <h4 class="font-bold text-base mb-1">¡Registro Exitoso!</h4>
+              <p class="text-sm text-white/90">{{ successMessage }}</p>
+            </div>
+            
+            <!-- Botón cerrar -->
+            <button @click="showSuccessMessage = false" class="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+              <Icon name="x" :size="20" />
+            </button>
+          </div>
+          
+          <!-- Barra de progreso -->
+          <div class="h-1 bg-white/20 overflow-hidden">
+            <div class="h-full bg-white/60 animate-progress-bar"></div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <!-- Container principal centrado -->
     <div class="min-h-screen flex flex-col items-center justify-start py-4 sm:py-5 px-3 sm:px-4 lg:px-6">
 
@@ -343,11 +382,11 @@
 </template>
 
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import { useTheme } from '@/composables/useTheme'
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 defineOptions({ layout: null })
 
@@ -355,9 +394,39 @@ const { isDark, toggleTheme } = useTheme()
 const currentStep = ref(1)
 const totalSteps = 4
 
+// Estado para el mensaje de éxito
+const showSuccessMessage = ref(false)
+const successMessage = ref('')
+
+// Obtener flash messages de Laravel
+const page = usePage()
+const flash = computed(() => page.props.flash)
+
+// Observar cambios en los mensajes flash
+watch(flash, (newFlash) => {
+  if (newFlash && newFlash.success) {
+    successMessage.value = newFlash.success
+    showSuccessMessage.value = true
+    
+    // Resetear el formulario
+    resetForm()
+    
+    // Ocultar el mensaje después de 5 segundos
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 5000)
+  }
+}, { deep: true, immediate: true })
+
 const form = useForm({
   documento: '', nombre: '', tipoPersona: '', correo: '', portatiles: [], vehiculos: []
 })
+
+const resetForm = () => {
+  form.reset()
+  form.clearErrors()
+  currentStep.value = 1
+}
 
 const getStepDescription = () => {
   const descriptions = {
@@ -440,6 +509,7 @@ const submit = () => {
   form.post(route('personas.store'), {
     onSuccess: (response) => {
       console.log('Persona creada exitosamente:', response);
+      // El mensaje de éxito y reset se manejan automáticamente en el watcher
     },
     onError: (errors) => {
       console.error('Errores de validación:', errors);
@@ -453,7 +523,22 @@ const submit = () => {
       }
     },
     preserveScroll: true,
-    preserveState: false,
+    preserveState: true,
   })
 }
 </script>
+
+<style scoped>
+@keyframes progress-bar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-progress-bar {
+  animation: progress-bar 5s linear forwards;
+}
+</style>

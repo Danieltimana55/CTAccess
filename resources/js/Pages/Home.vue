@@ -4,6 +4,9 @@ import { ref, onMounted, nextTick } from 'vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import Icon from '@/Components/Icon.vue'
 import PWAInstallPrompt from '@/Components/System/PWAInstallPrompt.vue'
+import LineChart from '@/Components/Charts/LineChart.vue'
+import BarChart from '@/Components/Charts/BarChart.vue'
+import DoughnutChart from '@/Components/Charts/DoughnutChart.vue'
 import { useTheme } from '@/composables/useTheme'
 
 const props = defineProps({
@@ -14,6 +17,19 @@ const props = defineProps({
 // Estado para actividad reciente
 const recentActivity = ref([])
 const loadingActivity = ref(true)
+
+// � Estado para registros recientes de personas
+const recentRegistrations = ref([])
+const loadingRegistrations = ref(true)
+
+// �📊 Estado para gráficos
+const loadingCharts = ref(true)
+const chartData = ref({
+  accesosPorHora: null,
+  ultimosSieteDias: null,
+  distribucionHoy: null,
+  tendenciaMes: null
+})
 
 // Tema
 const { isDark, toggleTheme } = useTheme()
@@ -68,6 +84,12 @@ const formatDate = (date) => {
 onMounted(() => {
   // Cargar actividad reciente inicial
   fetchRecentActivity()
+  
+  // � Cargar registros recientes de personas
+  fetchRecentRegistrations()
+  
+  // �📊 Cargar datos de gráficos
+  fetchChartData()
 
   // Iniciar reloj
   setInterval(updateClock, 1000)
@@ -107,9 +129,46 @@ onMounted(() => {
             recentActivity.value[index].isNew = false
           }
         }, 5000)
+        
+        // 📊 Actualizar gráficos cuando hay nuevo acceso
+        fetchChartData()
       })
   } else {
     console.warn('⚠️ Laravel Echo no está disponible. WebSockets deshabilitados.')
+  }
+  
+  // 👥 WEBSOCKET: Escuchar nuevos registros de personas
+  if (typeof window.Echo !== 'undefined') {
+    window.Echo.channel('personas')
+      .listen('.persona.registrada', (data) => {
+        console.log('Nueva persona registrada:', data)
+
+        const newRegistration = {
+          id: data.id,
+          nombre: data.nombre,
+          documento: data.documento,
+          tipo_persona: data.tipo_persona,
+          correo: data.correo,
+          tiempo: new Date(data.timestamp),
+          isNew: true
+        }
+
+        // Agregar al inicio de registros recientes
+        recentRegistrations.value.unshift(newRegistration)
+
+        // Mantener solo los últimos 15
+        if (recentRegistrations.value.length > 15) {
+          recentRegistrations.value = recentRegistrations.value.slice(0, 15)
+        }
+
+        // Quitar el marcador "isNew" después de 5 segundos
+        setTimeout(() => {
+          const index = recentRegistrations.value.findIndex(r => r.id === newRegistration.id)
+          if (index !== -1) {
+            recentRegistrations.value[index].isNew = false
+          }
+        }, 5000)
+      })
   }
 })
 
@@ -125,6 +184,107 @@ const fetchRecentActivity = async () => {
     loadingActivity.value = false
   }
 }
+
+// 👥 Registros Recientes de Personas
+const fetchRecentRegistrations = async () => {
+  try {
+    const response = await fetch('/api/personas/recientes')
+    const data = await response.json()
+    recentRegistrations.value = data
+    loadingRegistrations.value = false
+  } catch (error) {
+    console.error('Error fetching recent registrations:', error)
+    loadingRegistrations.value = false
+  }
+}
+
+// 📊 Obtener datos para los gráficos
+const fetchChartData = async () => {
+  try {
+    const response = await fetch('/api/analytics/charts')
+    const data = await response.json()
+    
+    // Gráfico de línea: Accesos por hora
+    chartData.value.accesosPorHora = {
+      labels: data.accesos_por_hora.labels,
+      datasets: [{
+        label: 'Accesos por Hora',
+        data: data.accesos_por_hora.data,
+        borderColor: isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+        backgroundColor: isDark.value ? 'rgba(34, 211, 238, 0.1)' : 'rgba(57, 169, 0, 0.1)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+        borderWidth: 2
+      }]
+    }
+    
+    // Gráfico de barras: Últimos 7 días
+    chartData.value.ultimosSieteDias = {
+      labels: data.ultimos_siete_dias.labels,
+      datasets: [
+        {
+          label: 'Entradas',
+          data: data.ultimos_siete_dias.entradas,
+          backgroundColor: isDark.value ? 'rgba(34, 211, 238, 0.8)' : 'rgba(57, 169, 0, 0.8)',
+          borderColor: isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+          borderWidth: 2
+        },
+        {
+          label: 'Salidas',
+          data: data.ultimos_siete_dias.salidas,
+          backgroundColor: isDark.value ? 'rgba(239, 68, 68, 0.8)' : 'rgba(220, 38, 38, 0.8)',
+          borderColor: isDark.value ? 'rgb(239, 68, 68)' : 'rgb(220, 38, 38)',
+          borderWidth: 2
+        }
+      ]
+    }
+    
+    // Gráfico de dona: Distribución hoy
+    chartData.value.distribucionHoy = {
+      labels: data.distribucion_hoy.labels,
+      datasets: [{
+        data: data.distribucion_hoy.data,
+        backgroundColor: [
+          isDark.value ? 'rgba(34, 211, 238, 0.8)' : 'rgba(57, 169, 0, 0.8)',
+          isDark.value ? 'rgba(239, 68, 68, 0.8)' : 'rgba(220, 38, 38, 0.8)',
+          isDark.value ? 'rgba(253, 224, 71, 0.8)' : 'rgba(253, 195, 0, 0.8)'
+        ],
+        borderColor: [
+          isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+          isDark.value ? 'rgb(239, 68, 68)' : 'rgb(220, 38, 38)',
+          isDark.value ? 'rgb(253, 224, 71)' : 'rgb(253, 195, 0)'
+        ],
+        borderWidth: 3
+      }]
+    }
+    
+    // Gráfico de línea: Tendencia del mes
+    chartData.value.tendenciaMes = {
+      labels: data.tendencia_mes.labels,
+      datasets: [{
+        label: 'Accesos Diarios',
+        data: data.tendencia_mes.data,
+        borderColor: isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+        backgroundColor: isDark.value ? 'rgba(34, 211, 238, 0.2)' : 'rgba(57, 169, 0, 0.2)',
+        tension: 0.4,
+        fill: true,
+        pointRadius: 4,
+        pointHoverRadius: 7,
+        pointBackgroundColor: isDark.value ? 'rgb(34, 211, 238)' : 'rgb(57, 169, 0)',
+        borderWidth: 3
+      }]
+    }
+    
+    loadingCharts.value = false
+  } catch (error) {
+    console.error('Error fetching chart data:', error)
+    loadingCharts.value = false
+  }
+}
+
 
 // Formatear tiempo relativo
 const formatRelativeTime = (date) => {
@@ -590,6 +750,259 @@ const handleLoginPressCancel = () => {
             </div>
 
           </div>
+
+          <!-- Columna 3: Registros Recientes de Personas (1 columna en large) -->
+          <div class="lg:col-span-1 relative flex-shrink-0">
+            
+            <!-- VERSIÓN DESKTOP Y MÓVIL UNIFICADA -->
+            <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-lg overflow-hidden">
+              <!-- Encabezado -->
+              <div class="bg-purple-600 dark:bg-purple-700 px-3 py-2.5 lg:px-4 lg:py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 lg:w-8 lg:h-8 bg-purple-700 dark:bg-purple-800 rounded-lg flex items-center justify-center relative">
+                    <Icon name="user-plus" :size="14" class="text-white lg:hidden" />
+                    <Icon name="user-plus" :size="16" class="text-white hidden lg:block" />
+                    <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-yellow-400 rounded-full border border-purple-700 dark:border-purple-900 live-indicator"></div>
+                  </div>
+                  <div>
+                    <h3 class="text-sm lg:text-base font-bold text-white">Registros</h3>
+                    <p class="text-[10px] text-white/70">Nuevas personas</p>
+                  </div>
+                </div>
+                <span class="text-xs font-medium text-white/80 bg-white/10 px-2 py-0.5 rounded-full">
+                  {{ recentRegistrations.length }}
+                </span>
+              </div>
+
+              <!-- Lista de Registros -->
+              <div class="p-2 bg-theme-secondary">
+                <div class="space-y-1.5 h-[516px] lg:h-[516px] overflow-y-auto custom-scrollbar pr-1">
+                  
+                  <!-- Loading State -->
+                  <template v-if="loadingRegistrations">
+                    <div v-for="i in 4" :key="i" class="flex items-center gap-2 p-2 bg-theme-card border border-theme-primary rounded-lg animate-pulse">
+                      <div class="w-8 h-8 bg-theme-tertiary rounded-lg"></div>
+                      <div class="flex-1 space-y-1">
+                        <div class="h-2.5 bg-theme-tertiary rounded w-32"></div>
+                        <div class="h-2 bg-theme-tertiary rounded w-24"></div>
+                      </div>
+                      <div class="w-16 h-5 bg-theme-tertiary rounded"></div>
+                    </div>
+                  </template>
+
+                  <!-- Lista de Registros -->
+                  <template v-else-if="recentRegistrations.length > 0">
+                    <transition-group name="spotlight">
+                      <div v-for="registro in recentRegistrations" :key="registro.id" :class="[
+                        'relative flex items-center gap-2 p-2 rounded-lg border-2 transition-all duration-500',
+                        registro.isNew
+                          ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-400 dark:border-purple-600 spotlight-card'
+                          : 'bg-theme-card border-theme-primary hover:border-theme-hover hover:shadow-theme-md',
+                        'cursor-pointer group'
+                      ]">
+                        <!-- Spotlight corners para nuevos -->
+                        <div v-if="registro.isNew" class="corner-spotlight top-left"></div>
+                        <div v-if="registro.isNew" class="corner-spotlight top-right"></div>
+                        <div v-if="registro.isNew" class="corner-spotlight bottom-left"></div>
+                        <div v-if="registro.isNew" class="corner-spotlight bottom-right"></div>
+
+                        <!-- Avatar con Badge -->
+                        <div class="relative flex-shrink-0">
+                          <div :class="[
+                            'w-8 h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-white font-bold border-2 transition-all duration-300',
+                            'bg-purple-600 border-purple-700 dark:bg-purple-600 dark:border-purple-500',
+                            registro.isNew ? 'scale-110 shake' : 'group-hover:scale-105'
+                          ]">
+                            <Icon name="user" :size="14" class="lg:hidden" />
+                            <Icon name="user" :size="16" class="hidden lg:block" />
+                          </div>
+                          <div v-if="registro.isNew"
+                            class="absolute -top-0.5 -right-0.5 w-3 h-3 lg:w-3.5 lg:h-3.5 bg-yellow-400 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center notification-badge">
+                            <span class="text-[7px] font-black text-purple-900">!</span>
+                          </div>
+                        </div>
+
+                        <!-- Información -->
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-1.5 mb-0.5">
+                            <p :class="[
+                              'font-bold text-xs lg:text-[13px] truncate',
+                              registro.isNew ? 'text-purple-900 dark:text-purple-200' : 'text-theme-primary'
+                            ]">
+                              {{ registro.nombre }}
+                            </p>
+                            <span v-if="registro.isNew"
+                              class="px-1.5 py-0.5 bg-yellow-400 text-purple-900 text-[8px] font-black rounded uppercase tracking-wider border border-yellow-500 blink-badge">
+                              ¡Nuevo!
+                            </span>
+                          </div>
+                          <div class="flex items-center gap-1.5 text-[10px]">
+                            <Icon name="briefcase" :size="9" 
+                              :class="registro.isNew ? 'text-purple-700 dark:text-purple-400' : 'text-theme-muted'" />
+                            <span
+                              :class="registro.isNew ? 'text-purple-800 dark:text-purple-300 font-semibold' : 'text-theme-muted'">
+                              {{ registro.tipo_persona }}
+                            </span>
+                            <span class="text-theme-muted text-[8px]">•</span>
+                            <Icon name="clock" :size="9"
+                              :class="registro.isNew ? 'text-purple-700 dark:text-purple-400' : 'text-theme-muted'" />
+                            <span :class="[
+                              'font-semibold',
+                              registro.isNew ? 'text-purple-800 dark:text-purple-300' : 'text-theme-muted'
+                            ]">
+                              {{ formatRelativeTime(registro.tiempo) }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- Badge de tipo -->
+                        <div class="flex-shrink-0">
+                          <div :class="[
+                            'px-1.5 py-0.5 rounded text-[9px] font-black uppercase border-2 transition-transform duration-300',
+                            'bg-purple-600 text-white border-purple-700 dark:bg-purple-600 dark:border-purple-500',
+                            'group-hover:scale-105'
+                          ]">
+                            <div class="flex items-center gap-0.5">
+                              <div :class="[
+                                'w-1 h-1 rounded-full bg-white',
+                                registro.isNew ? 'pulse-dot' : ''
+                              ]"></div>
+                              NEW
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </transition-group>
+                  </template>
+
+                  <!-- Empty State -->
+                  <template v-else>
+                    <div class="text-center py-12 text-theme-muted">
+                      <div class="w-14 h-14 mx-auto mb-3 bg-theme-tertiary rounded-xl flex items-center justify-center border-2 border-theme-primary">
+                        <Icon name="user-plus" :size="28" class="opacity-40" />
+                      </div>
+                      <p class="text-sm font-bold">Sin registros recientes</p>
+                      <p class="text-xs mt-1 opacity-70">Los nuevos registros aparecerán aquí</p>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 📊 SECCIÓN DE GRÁFICOS ANALÍTICOS -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          
+          <!-- Gráfico 1: Accesos por Hora del Día -->
+          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="trending-up" :size="16" class="text-white" />
+                </div>
+                <h3 class="text-sm font-bold text-white">Accesos por Hora (Hoy)</h3>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div class="p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                </div>
+              </div>
+              <div v-else-if="chartData.accesosPorHora" class="h-64">
+                <LineChart :chartData="chartData.accesosPorHora" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico 2: Comparativa Últimos 7 Días -->
+          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="bar-chart-2" :size="16" class="text-white" />
+                </div>
+                <h3 class="text-sm font-bold text-white">Últimos 7 Días</h3>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div class="p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                </div>
+              </div>
+              <div v-else-if="chartData.ultimosSieteDias" class="h-64">
+                <BarChart :chartData="chartData.ultimosSieteDias" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico 3: Distribución Hoy -->
+          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="pie-chart" :size="16" class="text-white" />
+                </div>
+                <h3 class="text-sm font-bold text-white">Distribución de Hoy</h3>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div class="p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                </div>
+              </div>
+              <div v-else-if="chartData.distribucionHoy" class="h-64">
+                <DoughnutChart :chartData="chartData.distribucionHoy" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico 4: Tendencia del Mes -->
+          <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
+            <div class="bg-sena-green-600 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-sena-green-700 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+                  <Icon name="calendar" :size="16" class="text-white" />
+                </div>
+                <h3 class="text-sm font-bold text-white">Tendencia del Mes</h3>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs text-white/80 bg-white/10 px-2 py-1 rounded-full">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div class="p-4 bg-theme-secondary">
+              <div v-if="loadingCharts" class="h-64 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-12 h-12 border-4 border-theme-primary border-t-sena-green-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-2"></div>
+                  <p class="text-sm text-theme-muted">Cargando datos...</p>
+                </div>
+              </div>
+              <div v-else-if="chartData.tendenciaMes" class="h-64">
+                <LineChart :chartData="chartData.tendenciaMes" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </main>

@@ -26,11 +26,13 @@
     "dependencies": {
         "@inertiajs/inertia": "^0.11.1",
         "@vueuse/core": "^13.9.0",
+        "chart.js": "^4.5.1",
         "idb": "^8.0.3",
         "jsqr": "^1.4.0",
         "lucide-vue-next": "^0.544.0",
         "pinia": "^3.0.3",
         "vue": "^3.5.21",
+        "vue-chartjs": "^5.3.2",
         "vue-qrcode-reader": "^5.7.3",
         "vue-router": "^4.5.1"
     }

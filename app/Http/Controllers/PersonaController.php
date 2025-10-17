@@ -70,6 +70,9 @@ class PersonaController extends Controller
         try {
             $persona = $this->service->createWithRelations($request->validated());
 
+            // 🔥 Disparar evento WebSocket para notificar registro en tiempo real
+            event(new \App\Events\PersonaRegistrada($persona));
+
             // Enviar email con el QR adjunto si hay correo (no bloquear en caso de error)
             if (!empty($persona->correo)) {
                 try {
@@ -94,8 +97,8 @@ class PersonaController extends Controller
                     ->with('success', 'Persona creada correctamente');
             } else {
                 return redirect()
-                    ->route('login')
-                    ->with('success', '¡Registro exitoso! Tu código QR ha sido enviado a tu correo. Ya puedes iniciar sesión.');
+                    ->route('personas.create')
+                    ->with('success', '¡Registro exitoso! Tu código QR ha sido enviado a tu correo.');
             }
                 
         } catch (\Throwable $e) {
