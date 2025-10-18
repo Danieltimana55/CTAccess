@@ -16,6 +16,8 @@ use App\Mail\PersonaQrMailable;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Jornada;
+use App\Models\ProgramaFormacion;
 
 class PersonaController extends Controller
 {
@@ -59,7 +61,18 @@ class PersonaController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Personas/Create');
+        $jornadas = Jornada::activas()
+            ->orderBy('hora_inicio')
+            ->get(['id', 'nombre', 'descripcion', 'hora_inicio', 'hora_fin']);
+
+        $programas = ProgramaFormacion::activos()
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'ficha', 'nivel_formacion', 'fecha_inicio', 'fecha_fin']);
+
+        return Inertia::render('Personas/Create', [
+            'jornadas' => $jornadas,
+            'programas' => $programas
+        ]);
     }
 
     /**

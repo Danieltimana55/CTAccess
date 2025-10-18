@@ -24,6 +24,12 @@ class DatabaseSeeder extends Seeder
         // Usuarios del sistema (admin y celador)
         $this->call(UsuarioSistemaSeeder::class);
         
+        // Jornadas (Mañana, Mixta, Nocturna)
+        $this->call(JornadaSeeder::class);
+        
+        // Programas de Formación
+        $this->call(ProgramaFormacionSeeder::class);
+        
         // Personas de prueba para autenticación
         $this->call(PersonaSeeder::class);
 

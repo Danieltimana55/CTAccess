@@ -13,7 +13,7 @@ class Persona extends Authenticatable
     use HasFactory, Notifiable;
     
     protected $primaryKey = 'idPersona';
-    protected $fillable = ['documento', 'Nombre', 'TipoPersona', 'qrCode', 'correo', 'contraseña'];
+    protected $fillable = ['documento', 'Nombre', 'TipoPersona', 'jornada_id', 'programa_formacion_id', 'qrCode', 'correo', 'contraseña'];
     
     protected $hidden = [
         'contraseña',
@@ -69,6 +69,16 @@ class Persona extends Authenticatable
     public function accesos()
     {
         return $this->hasMany(Acceso::class, 'persona_id');
+    }
+
+    public function jornada()
+    {
+        return $this->belongsTo(Jornada::class, 'jornada_id');
+    }
+
+    public function programaFormacion()
+    {
+        return $this->belongsTo(ProgramaFormacion::class, 'programa_formacion_id');
     }
 
     // Métodos para QR

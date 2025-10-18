@@ -148,6 +148,48 @@
               </div>
             </div>
 
+            <div>
+              <label for="jornada" class="block text-sm font-medium text-theme-primary mb-1.5">Jornada</label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors">
+                  <Icon name="clock" :size="18" class="text-theme-muted group-focus-within:text-sena-green-500 dark:group-focus-within:text-cyan-400" />
+                </div>
+                <select id="jornada" v-model="form.jornada_id" class="block w-full pl-10 pr-8 py-2.5 text-sm border border-theme-primary rounded-lg bg-theme-secondary text-theme-primary focus:outline-none focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 focus:border-transparent transition-all duration-200 hover:border-sena-green-300 dark:hover:border-cyan-600 appearance-none cursor-pointer">
+                  <option :value="null">Sin jornada asignada</option>
+                  <option v-for="jornada in jornadas" :key="jornada.id" :value="jornada.id">
+                    {{ jornada.nombre }} ({{ formatTime(jornada.hora_inicio) }} - {{ formatTime(jornada.hora_fin) }})
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <Icon name="chevron-down" :size="14" class="text-theme-muted" />
+                </div>
+              </div>
+              <p class="mt-1.5 text-xs text-theme-muted flex items-center">
+                <Icon name="info" :size="12" class="mr-1" />Opcional: Asigna el horario de trabajo/estudio
+              </p>
+            </div>
+
+            <div class="lg:col-span-2">
+              <label for="programa" class="block text-sm font-medium text-theme-primary mb-1.5">Programa de Formación</label>
+              <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors">
+                  <Icon name="graduation-cap" :size="18" class="text-theme-muted group-focus-within:text-sena-green-500 dark:group-focus-within:text-cyan-400" />
+                </div>
+                <select id="programa" v-model="form.programa_formacion_id" class="block w-full pl-10 pr-8 py-2.5 text-sm border border-theme-primary rounded-lg bg-theme-secondary text-theme-primary focus:outline-none focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 focus:border-transparent transition-all duration-200 hover:border-sena-green-300 dark:hover:border-cyan-600 appearance-none cursor-pointer">
+                  <option :value="null">Sin programa asignado</option>
+                  <option v-for="programa in programas" :key="programa.id" :value="programa.id">
+                    {{ programa.nombre }} - Ficha {{ programa.ficha }} ({{ programa.nivel_formacion }})
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                  <Icon name="chevron-down" :size="14" class="text-theme-muted" />
+                </div>
+              </div>
+              <p class="mt-1.5 text-xs text-theme-muted flex items-center">
+                <Icon name="info" :size="12" class="mr-1" />Solo para Aprendices e Instructores
+              </p>
+            </div>
+
             <div class="lg:col-span-2">
               <label for="correo" class="block text-sm font-medium text-theme-primary mb-1.5">Correo Electrónico</label>
               <div class="relative group">
@@ -298,6 +340,14 @@
                   <div class="text-xs sm:text-sm font-semibold text-theme-primary">{{ form.tipoPersona || 'No especificado' }}</div>
                 </div>
                 <div class="bg-theme-primary rounded-lg p-2.5 sm:p-3">
+                  <div class="text-[10px] sm:text-xs text-theme-muted mb-0.5">Jornada</div>
+                  <div class="text-xs sm:text-sm font-semibold text-theme-primary">{{ getJornadaName() }}</div>
+                </div>
+                <div class="bg-theme-primary rounded-lg p-2.5 sm:p-3 sm:col-span-2">
+                  <div class="text-[10px] sm:text-xs text-theme-muted mb-0.5">Programa de Formación</div>
+                  <div class="text-xs sm:text-sm font-semibold text-theme-primary">{{ getProgramaName() }}</div>
+                </div>
+                <div class="bg-theme-primary rounded-lg p-2.5 sm:p-3 sm:col-span-2">
                   <div class="text-[10px] sm:text-xs text-theme-muted mb-0.5">Correo Electrónico</div>
                   <div class="text-xs sm:text-sm font-semibold text-theme-primary truncate">{{ form.correo || 'No especificado' }}</div>
                 </div>
@@ -390,6 +440,18 @@ import { ref, computed, watch, onMounted } from 'vue'
 
 defineOptions({ layout: null })
 
+// Recibir las jornadas como prop
+const props = defineProps({
+  jornadas: {
+    type: Array,
+    default: () => []
+  },
+  programas: {
+    type: Array,
+    default: () => []
+  }
+})
+
 const { isDark, toggleTheme } = useTheme()
 const currentStep = ref(1)
 const totalSteps = 4
@@ -423,7 +485,7 @@ watch(() => page.props.flash?.success, (successMessage) => {
 }, { immediate: true })
 
 const form = useForm({
-  documento: '', nombre: '', tipoPersona: '', correo: '', portatiles: [], vehiculos: []
+  documento: '', nombre: '', tipoPersona: '', jornada_id: null, programa_formacion_id: null, correo: '', portatiles: [], vehiculos: []
 })
 
 const resetForm = () => {
@@ -573,6 +635,30 @@ const submit = () => {
     preserveScroll: true,
     preserveState: false, // Cambiado a false para que reciba el flash message
   })
+}
+
+// Función para formatear hora de 24h a 12h AM/PM
+const formatTime = (time) => {
+  if (!time) return '';
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+}
+
+// Función para obtener el nombre de la jornada seleccionada
+const getJornadaName = () => {
+  if (!form.jornada_id) return 'Sin asignar';
+  const jornada = props.jornadas.find(j => j.id === form.jornada_id);
+  return jornada ? `${jornada.nombre} (${formatTime(jornada.hora_inicio)} - ${formatTime(jornada.hora_fin)})` : 'Sin asignar';
+}
+
+// Función para obtener el nombre del programa de formación
+const getProgramaName = () => {
+  if (!form.programa_formacion_id) return 'Sin asignar';
+  const programa = props.programas.find(p => p.id === form.programa_formacion_id);
+  return programa ? `${programa.nombre} - Ficha ${programa.ficha}` : 'Sin asignar';
 }
 </script>
 

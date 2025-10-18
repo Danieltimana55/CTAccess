@@ -18,6 +18,8 @@ class StorePersonaRequest extends FormRequest
             'documento' => ['nullable', 'string', 'max:255', 'unique:personas,documento'],
             'nombre' => ['required', 'string', 'max:255'],
             'tipoPersona' => ['required', 'string', 'max:255'],
+            'jornada_id' => ['nullable', 'exists:jornadas,id'],
+            'programa_formacion_id' => ['nullable', 'exists:programas_formacion,id'],
             'correo' => ['nullable', 'string', 'email', 'max:255'],
 
             'portatiles' => ['sometimes', 'array'],
@@ -36,6 +38,8 @@ class StorePersonaRequest extends FormRequest
         return [
             'nombre' => 'Nombre',
             'tipoPersona' => 'Tipo de Persona',
+            'jornada_id' => 'Jornada',
+            'programa_formacion_id' => 'Programa de Formación',
             'portatiles.*.serial' => 'Serial del portátil',
             'vehiculos.*.placa' => 'Placa del vehículo',
         ];
