@@ -82,7 +82,7 @@ const openEditModal = (persona) => {
   editingPersonaId.value = persona.id
   form.nombre = persona.nombre
   form.documento = persona.documento
-  form.tipoPersona = persona.tipo_persona
+  form.tipoPersona = persona.tipoPersona || persona.TipoPersona
   form.correo = persona.correo || ''
   form.clearErrors()
   showModal.value = true
@@ -226,7 +226,7 @@ onMounted(() => {
         </div>
 
         <!-- Vista Móvil -->
-        <div v-else-if="!loading" class="lg:hidden divide-y divide-theme-primary">
+        <div v-if="!loading" class="lg:hidden divide-y divide-theme-primary">
           <div v-for="persona in personas.data" :key="persona.id" class="p-3 hover:bg-theme-secondary transition-colors">
             <div class="flex items-start justify-between gap-2 mb-2">
               <div class="flex-1 min-w-0">
@@ -278,7 +278,7 @@ onMounted(() => {
         </div>
 
         <!-- Tabla Desktop -->
-        <div v-else-if="!loading" class="hidden lg:block overflow-x-auto">
+        <div v-if="!loading" class="hidden lg:block overflow-x-auto">
           <table class="min-w-full divide-y divide-theme-primary text-sm">
             <thead class="bg-theme-secondary">
               <tr>

@@ -67,6 +67,8 @@ import {
   Database,
   File,
   Folder,
+  BookOpen,
+  GraduationCap,
   
   // UI Elements
   ChevronDown,
@@ -205,6 +207,10 @@ const iconMap = {
   'database': Database,
   'file': File,
   'folder': Folder,
+  'book-open': BookOpen,
+  'programa': BookOpen,
+  'graduation-cap': GraduationCap,
+  'formacion': GraduationCap,
   
   // UI Elements
   'chevron-down': ChevronDown,

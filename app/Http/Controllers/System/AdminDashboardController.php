@@ -7,10 +7,12 @@ use App\Models\Acceso;
 use App\Models\Incidencia;
 use App\Models\Persona;
 use App\Models\UsuarioSistema;
+use App\Models\ProgramaFormacion;
 use App\Http\Resources\PersonaResource;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
@@ -30,44 +32,72 @@ class AdminDashboardController extends Controller
             'usuarios' => UsuarioSistema::count(),
             'accesos_hoy' => Acceso::whereDate('fecha_entrada', $today)->count(),
             'incidencias_7d' => Incidencia::where('created_at', '>=', Carbon::now()->subDays(7))->count(),
+            'programas_formacion' => ProgramaFormacion::count(),
+            'programas_vigentes' => ProgramaFormacion::vigentes()->count(),
         ];
 
-        // Últimos registros
-        $recentAccesos = Acceso::with(['persona', 'usuarioEntrada', 'usuarioSalida'])
-            ->orderByDesc('fecha_entrada')
-            ->limit(10)
+        // Datos para gráficos
+        // Gráfico 1: Accesos por día (últimos 14 días)
+        $accesosPorDia = Acceso::select(
+                DB::raw('DATE(fecha_entrada) as fecha'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('fecha_entrada', '>=', Carbon::now()->subDays(13)->startOfDay())
+            ->groupBy('fecha')
+            ->orderBy('fecha')
             ->get()
-            ->map(function ($a) {
+            ->map(function ($item) {
                 return [
-                    'id' => $a->id,
-                    'persona' => $a->persona?->Nombre,
-                    'fecha_entrada' => $a->fecha_entrada,
-                    'fecha_salida' => $a->fecha_salida,
-                    'estado' => $a->estado,
-                    'entrada_por' => $a->usuarioEntrada?->nombre,
-                    'salida_por' => $a->usuarioSalida?->nombre,
+                    'fecha' => Carbon::parse($item->fecha)->format('d/m'),
+                    'dia' => Carbon::parse($item->fecha)->locale('es')->isoFormat('ddd'),
+                    'total' => $item->total,
                 ];
             });
 
-        $recentIncidencias = Incidencia::with(['acceso', 'acceso.persona'])
-            ->orderByDesc('created_at')
-            ->limit(10)
+        // Gráfico 2: Incidencias por tipo (último mes)
+        $incidenciasPorTipo = Incidencia::select('tipo', DB::raw('COUNT(*) as total'))
+            ->where('created_at', '>=', Carbon::now()->subMonth())
+            ->groupBy('tipo')
             ->get()
-            ->map(function ($i) {
+            ->map(function ($item) {
+                $nombres = [
+                    'seguridad' => 'Seguridad',
+                    'acceso' => 'Acceso',
+                    'equipamiento' => 'Equipamiento',
+                    'comportamiento' => 'Comportamiento',
+                    'otro' => 'Otro',
+                ];
                 return [
-                    'id' => $i->incidenciaId ?? $i->id,
-                    'tipo' => $i->tipo,
-                    'descripcion' => $i->descripcion,
-                    'persona' => optional($i->acceso?->persona)->Nombre,
-                    'fecha' => $i->created_at,
+                    'tipo' => $nombres[$item->tipo] ?? ucfirst($item->tipo),
+                    'total' => $item->total,
+                ];
+            });
+
+        // Gráfico 3: Personas por tipo
+        $personasPorTipo = Persona::select('TipoPersona', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('TipoPersona')
+            ->groupBy('TipoPersona')
+            ->get()
+            ->map(function ($item) {
+                $nombres = [
+                    'Estudiante' => 'Estudiantes',
+                    'Funcionario' => 'Funcionarios',
+                    'Visitante' => 'Visitantes',
+                    'Instructor' => 'Instructores',
+                    'Contratista' => 'Contratistas',
+                ];
+                return [
+                    'tipo' => $nombres[$item->TipoPersona] ?? $item->TipoPersona,
+                    'total' => $item->total,
                 ];
             });
 
         return Inertia::render('System/Admin/Dashboard', [
             'stats' => $stats,
-            'recent' => [
-                'accesos' => $recentAccesos,
-                'incidencias' => $recentIncidencias,
+            'charts' => [
+                'accesosPorDia' => $accesosPorDia,
+                'incidenciasPorTipo' => $incidenciasPorTipo,
+                'personasPorTipo' => $personasPorTipo,
             ],
             'meta' => [
                 'generated_at' => now()->toDateTimeString(),
@@ -103,7 +133,7 @@ class AdminDashboardController extends Controller
 
         return response()->json([
             'personas' => [
-                'data' => PersonaResource::collection($personas->items()),
+                'data' => PersonaResource::collection($personas->items())->toArray($request),
                 'links' => $personas->linkCollection()->toArray(),
                 'total' => $personas->total(),
                 'from' => $personas->firstItem(),

@@ -53,6 +53,11 @@ return [
                 'icon'  => 'heroicon-m-truck',
                 'route' => 'system.admin.vehiculos.index',
             ],
+            [
+                'label' => 'Programas de Formación',
+                'icon'  => 'heroicon-m-academic-cap',
+                'route' => 'system.admin.programas-formacion.index',
+            ],
         ],
         'celador' => [
             [

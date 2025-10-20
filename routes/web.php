@@ -87,6 +87,14 @@ Route::prefix('system')->name('system.')->group(function () {
             Route::put('vehiculos/{vehiculo}', [App\Http\Controllers\System\Admin\VehiculosController::class, 'update'])->name('vehiculos.update');
             Route::delete('vehiculos/{vehiculo}', [App\Http\Controllers\System\Admin\VehiculosController::class, 'destroy'])->name('vehiculos.destroy');
 
+            // Gestión de programas de formación
+            Route::get('programas-formacion', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'index'])->name('programas-formacion.index');
+            Route::get('programas-formacion/data', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'data'])->name('programas-formacion.data');
+            Route::post('programas-formacion', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'store'])->name('programas-formacion.store');
+            Route::put('programas-formacion/{programa}', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'update'])->name('programas-formacion.update');
+            Route::delete('programas-formacion/{programa}', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'destroy'])->name('programas-formacion.destroy');
+            Route::post('programas-formacion/{programa}/toggle', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'toggleActivo'])->name('programas-formacion.toggle');
+
             // Accesos (reutilizando controlador del celador) - Admin tiene todas las funcionalidades
             Route::get('/accesos', [CeladorAccesoController::class, 'index'])->name('accesos.index');
             Route::post('/accesos', [CeladorAccesoController::class, 'store'])->name('accesos.store');
