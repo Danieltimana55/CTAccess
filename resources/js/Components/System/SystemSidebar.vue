@@ -44,6 +44,26 @@ const getIconName = (label) => {
     'hidden lg:flex lg:shrink-0 lg:flex-col lg:border-r border-theme-primary bg-theme-sidebar shadow-theme-sm transition-all duration-300',
     collapsed ? 'lg:w-16' : 'lg:w-64'
   ]">
+    <!-- Collapse Button (Moved to top) -->
+    <div class="border-b border-theme-primary bg-theme-secondary p-2">
+      <button
+        @click="emit('toggle-collapse')"
+        :class="[
+          'group relative w-full overflow-hidden rounded-lg p-3 transition-all duration-300',
+          'bg-sena-green-500/10 dark:bg-blue-500/10',
+          'hover:bg-sena-green-500/20 dark:hover:bg-blue-500/20',
+          'border border-sena-green-500/30 dark:border-cyan-500/30',
+          'hover:border-sena-green-500 dark:hover:border-cyan-500',
+          'flex justify-center'
+        ]"
+        :title="collapsed ? 'Expandir menú' : 'Contraer menú'"
+      >
+        <div class="flex items-center justify-center rounded-lg bg-sena-green-500 dark:bg-cyan-500 p-2 text-white transition-all duration-300">
+          <Icon name="menu" :size="18" />
+        </div>
+      </button>
+    </div>
+
     <!-- Rol Badge -->
     <div v-if="!collapsed" class="flex items-center gap-3 border-b border-theme-primary bg-theme-secondary p-4">
       <div class="flex h-8 w-8 items-center justify-center rounded-full bg-sena-green-600 dark:bg-cyan-600">
@@ -71,8 +91,8 @@ const getIconName = (label) => {
           'group flex w-full items-center rounded-lg text-left font-semibold transition-all duration-200 ease-in-out',
           collapsed ? 'px-2 py-3 justify-center' : 'px-4 py-3',
           isActiveRoute(item.route)
-            ? 'bg-gradient-to-r from-sena-green-600 to-sena-green-500 dark:from-blue-600 dark:to-blue-500 text-white shadow-lg shadow-sena-green-600/30 dark:shadow-blue-600/30 scale-105' + (collapsed ? '' : ' border-l-4 border-sena-green-300 dark:border-cyan-400')
-            : 'text-theme-secondary hover:bg-gradient-to-r hover:from-sena-green-50 hover:to-sena-green-100 dark:hover:from-sena-blue-900/20 dark:hover:to-sena-blue-800/20 hover:text-sena-green-700 dark:hover:text-cyan-400 hover:shadow-md hover:scale-105 hover:border-l-4 hover:border-sena-green-500 dark:hover:border-cyan-500'
+            ? 'bg-sena-green-600 dark:bg-blue-600 text-white' + (collapsed ? '' : ' border-l-4 border-sena-green-300 dark:border-cyan-400')
+            : 'text-theme-secondary hover:bg-sena-green-50 dark:hover:bg-sena-blue-900/20 hover:text-sena-green-700 dark:hover:text-cyan-400 hover:border-l-4 hover:border-sena-green-500 dark:hover:border-cyan-500'
         ]"
         @click="go(item.route)"
         :title="collapsed ? item.label : undefined"
@@ -81,8 +101,8 @@ const getIconName = (label) => {
           <div :class="[
             'flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200',
             isActiveRoute(item.route)
-              ? 'bg-white/20 text-white shadow-inner'
-              : 'bg-theme-tertiary text-theme-muted group-hover:bg-sena-green-500 dark:group-hover:bg-cyan-500 group-hover:text-white group-hover:shadow-lg group-hover:scale-110'
+              ? 'bg-white/20 text-white'
+              : 'bg-theme-tertiary text-theme-muted group-hover:bg-sena-green-500 dark:group-hover:bg-cyan-500 group-hover:text-white'
           ]">
             <Icon :name="getIconName(item.label)" :size="18" />
           </div>
@@ -96,35 +116,10 @@ const getIconName = (label) => {
       </button>
     </nav>
 
-    <!-- Footer with collapse button -->
+    <!-- Footer with version -->
     <div class="border-t border-theme-primary bg-theme-secondary">
-      <!-- Collapse Button -->
-      <div class="p-2">
-        <button
-          @click="emit('toggle-collapse')"
-          :class="[
-            'group relative w-full overflow-hidden rounded-lg p-3 transition-all duration-300',
-            'bg-gradient-to-r from-sena-green-500/10 to-sena-green-600/10 dark:from-blue-500/10 dark:to-blue-600/10',
-            'hover:from-sena-green-500/20 hover:to-sena-green-600/20 dark:hover:from-blue-500/20 dark:hover:to-blue-600/20',
-            'border border-sena-green-500/30 dark:border-cyan-500/30',
-            'hover:border-sena-green-500 dark:hover:border-cyan-500',
-            'hover:shadow-lg hover:shadow-sena-green-500/20 dark:hover:shadow-cyan-500/20',
-            'hover:scale-105',
-            collapsed ? 'flex justify-center' : 'flex items-center gap-3'
-          ]"
-          :title="collapsed ? (collapsed ? 'Expandir menú' : 'Contraer menú') : undefined"
-        >
-          <div class="flex items-center justify-center rounded-lg bg-sena-green-500 dark:bg-cyan-500 p-2 text-white shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-            <Icon name="menu" :size="18" />
-          </div>
-          <span v-if="!collapsed" class="text-sm font-semibold text-sena-green-700 dark:text-cyan-400 group-hover:translate-x-1 transition-transform duration-200">
-            {{ collapsed ? 'Expandir' : 'Contraer' }} menú
-          </span>
-        </button>
-      </div>
-      
       <!-- Version -->
-      <div class="px-3 pb-3 pt-1">
+      <div class="px-3 py-3">
         <div v-if="!collapsed" class="text-xs text-theme-muted text-center">
           CTAccess v2.0
         </div>

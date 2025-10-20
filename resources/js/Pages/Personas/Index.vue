@@ -47,7 +47,7 @@ const getEstadoBadge = (estado) => {
     <PersonaLayout :persona="persona">
         <!-- Bienvenida -->
         <div class="mb-8">
-            <div class="bg-gradient-to-r from-sena-green-600 to-cyan-600 dark:from-blue-600 dark:to-cyan-600 rounded-2xl shadow-xl p-8 text-white">
+            <div class="bg-sena-green-600 dark:bg-cyan-600 rounded-2xl p-8 text-white">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h1 class="text-3xl font-bold mb-2">
@@ -57,7 +57,7 @@ const getEstadoBadge = (estado) => {
                             Portal de Personas - CTAccess
                         </p>
                     </div>
-                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-white/20 backdrop-blur-sm">
+                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-white/20">
                         <span class="text-4xl font-bold">
                             {{ persona.Nombre.charAt(0).toUpperCase() }}
                         </span>

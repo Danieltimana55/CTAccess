@@ -42,35 +42,17 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-sena-green-50 via-white to-cyan-50 dark:from-gray-900 dark:via-sena-blue-950 dark:to-gray-900 transition-colors duration-500">
+    <div class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-sena-green-50 dark:bg-gray-900 transition-colors duration-500">
         <Head title="Iniciar Sesión - CTAccess" />
         
-        <!-- Partículas animadas de fondo -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-          <div
-            v-for="n in 50"
-            :key="n"
-            class="absolute rounded-full animate-float bg-gradient-to-br from-sena-green-400 to-cyan-400 dark:from-cyan-500 dark:to-blue-500 opacity-20 dark:opacity-10"
-            :style="{
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              width: (Math.random() * 4 + 2) + 'px',
-              height: (Math.random() * 4 + 2) + 'px',
-              animationDuration: (Math.random() * 20 + 15) + 's',
-              animationDelay: (Math.random() * 5) + 's',
-            }"
-          ></div>
-        </div>
+        <!-- Partículas animadas de fondo - REMOVIDAS -->
 
-        <!-- Efectos de luz de fondo -->
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-sena-green-400 dark:bg-cyan-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 dark:opacity-10 animate-blob"></div>
-        <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-400 dark:bg-blue-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 dark:opacity-10 animate-blob animation-delay-2000"></div>
-        <div class="absolute bottom-0 left-1/3 w-96 h-96 bg-yellow-300 dark:bg-cyan-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 dark:opacity-10 animate-blob animation-delay-4000"></div>
+        <!-- Efectos de luz de fondo - REMOVIDOS -->
 
         <!-- Botón de tema -->
         <button
           @click="toggleTheme"
-          class="absolute top-6 right-6 z-20 group rounded-xl p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-sena-green-200 dark:border-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+          class="absolute top-6 right-6 z-20 group rounded-xl p-3 bg-white dark:bg-gray-800 border border-sena-green-200 dark:border-cyan-700 transition-all duration-300"
           :title="isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
         >
           <Icon :name="isDark ? 'sun' : 'moon'" :size="24" class="text-sena-green-600 dark:text-cyan-400 group-hover:rotate-180 transition-transform duration-500" />
@@ -80,11 +62,11 @@ const submit = () => {
 
             <!-- Logo -->
             <div class="text-center mb-8">
-                <img src="/icons/icon-192x192.png" alt="CTAccess Logo" class="mx-auto h-32 w-32 object-contain drop-shadow-2xl transform transition-all duration-500 hover:scale-110" />
+                <img src="/icons/icon-192x192.png" alt="CTAccess Logo" class="mx-auto h-32 w-32 object-contain transform transition-all duration-500" />
             </div>
 
             <!-- Formulario -->
-            <div class="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-sena-green-100 dark:border-cyan-900 transition-all duration-500 hover:shadow-sena-green-500/20 dark:hover:shadow-cyan-500/20">
+            <div class="relative bg-white dark:bg-gray-800 rounded-2xl p-8 border border-sena-green-100 dark:border-cyan-900 transition-all duration-500">
                 
                 <div v-if="status" class="mb-6 p-4 rounded-lg text-sm bg-sena-green-50 dark:bg-cyan-900/20 border border-sena-green-200 dark:border-cyan-700 text-sena-green-700 dark:text-cyan-400">
                     {{ status }}
@@ -157,7 +139,7 @@ const submit = () => {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="group relative w-full flex items-center justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl focus:ring-sena-green-500 dark:focus:ring-cyan-500 uppercase tracking-wider bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-blue-600 dark:to-blue-700 hover:from-sena-green-700 hover:to-sena-green-800 dark:hover:from-blue-700 dark:hover:to-blue-800 hover:scale-105 active:scale-95"
+                            class="group relative w-full flex items-center justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus:ring-sena-green-500 dark:focus:ring-cyan-500 uppercase tracking-wider bg-sena-green-600 dark:bg-blue-600 hover:bg-sena-green-700 dark:hover:bg-blue-700"
                         >
                             <span v-if="form.processing" class="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

@@ -105,7 +105,7 @@ const submit = () => {
             <div class="flex items-center justify-end pt-2">
                 <button
                     type="submit"
-                    class="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-blue-600 dark:to-blue-700 border border-transparent rounded-lg font-semibold text-sm text-white uppercase tracking-widest hover:from-sena-green-700 hover:to-sena-green-800 dark:hover:from-blue-700 dark:hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    class="w-full inline-flex items-center justify-center px-6 py-3 bg-sena-green-600 dark:bg-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white uppercase tracking-widest hover:bg-sena-green-700 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-300 active:scale-95"
                     :class="{ 'opacity-50 cursor-not-allowed': form.processing }"
                     :disabled="form.processing"
                 >

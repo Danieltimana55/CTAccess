@@ -55,26 +55,25 @@ onMounted(() => {
         <!-- Botón de tema -->
         <button
           @click="toggleTheme"
-          class="absolute top-6 right-6 z-20 group rounded-xl p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-sena-green-200 dark:border-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+          class="absolute top-6 right-6 z-20 group rounded-xl p-3 bg-white dark:bg-gray-800 border border-sena-green-200 dark:border-cyan-700 transition-all duration-300"
           :title="isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
         >
           <Icon :name="isDark ? 'sun' : 'moon'" :size="24" class="text-sena-green-600 dark:text-cyan-400 group-hover:rotate-180 transition-transform duration-500" />
         </button>
 
         <!-- Logo -->
-        <div class="relative z-10 transform transition-all duration-500 hover:scale-110">
+        <div class="relative z-10 transform transition-all duration-500">
             <Link href="/">
                 <div class="relative">
-                  <div class="absolute inset-0 bg-sena-green-400 dark:bg-cyan-500 rounded-full blur-2xl opacity-50 dark:opacity-30 animate-pulse"></div>
-                  <ApplicationLogo classes="relative h-24 w-auto object-contain drop-shadow-2xl" />
+                  <ApplicationLogo classes="relative h-24 w-auto object-contain" />
                 </div>
             </Link>
         </div>
 
         <!-- Formulario -->
-        <div class="relative z-10 mt-8 w-full overflow-hidden bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl px-8 py-8 shadow-2xl sm:max-w-md sm:rounded-2xl border border-sena-green-100 dark:border-cyan-900 transition-all duration-500 hover:shadow-sena-green-500/20 dark:hover:shadow-cyan-500/20">
+        <div class="relative z-10 mt-8 w-full overflow-hidden bg-white dark:bg-gray-800 px-8 py-8 sm:max-w-md sm:rounded-2xl border border-sena-green-100 dark:border-cyan-900 transition-all duration-500">
             <!-- Borde animado superior -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sena-green-500 via-cyan-500 to-sena-green-500 dark:from-cyan-500 dark:via-blue-500 dark:to-cyan-500 animate-gradient-x"></div>
+            <div class="absolute top-0 left-0 right-0 h-1 bg-sena-green-500 dark:bg-cyan-500"></div>
             
             <slot />
         </div>

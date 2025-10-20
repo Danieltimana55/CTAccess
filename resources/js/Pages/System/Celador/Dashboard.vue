@@ -95,9 +95,9 @@ const getTipoColor = (tipo) => {
       <!-- Estadísticas principales - Compactas -->
       <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <!-- Accesos Hoy -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-4 text-white shadow-md">
+        <div class="bg-blue-600 rounded-lg p-4 text-white">
           <div class="flex items-center gap-3">
-            <div class="p-2 bg-white/20 rounded-md backdrop-blur-sm">
+            <div class="p-2 bg-white/20 rounded-md">
               <Icon name="log-in" :size="20" />
             </div>
             <div class="flex-1">
@@ -108,9 +108,9 @@ const getTipoColor = (tipo) => {
         </div>
 
         <!-- Accesos Activos -->
-        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-4 text-white shadow-md">
+        <div class="bg-emerald-600 rounded-lg p-4 text-white">
           <div class="flex items-center gap-3">
-            <div class="p-2 bg-white/20 rounded-md backdrop-blur-sm">
+            <div class="p-2 bg-white/20 rounded-md">
               <Icon name="users" :size="20" />
             </div>
             <div class="flex-1">
@@ -121,9 +121,9 @@ const getTipoColor = (tipo) => {
         </div>
 
         <!-- Incidencias Hoy -->
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg p-4 text-white shadow-md">
+        <div class="bg-orange-600 rounded-lg p-4 text-white">
           <div class="flex items-center gap-3">
-            <div class="p-2 bg-white/20 rounded-md backdrop-blur-sm">
+            <div class="p-2 bg-white/20 rounded-md">
               <Icon name="alert-triangle" :size="20" />
             </div>
             <div class="flex-1">
@@ -134,9 +134,9 @@ const getTipoColor = (tipo) => {
         </div>
 
         <!-- Total Personas -->
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-4 text-white shadow-md">
+        <div class="bg-purple-600 rounded-lg p-4 text-white">
           <div class="flex items-center gap-3">
-            <div class="p-2 bg-white/20 rounded-md backdrop-blur-sm">
+            <div class="p-2 bg-white/20 rounded-md">
               <Icon name="user-check" :size="20" />
             </div>
             <div class="flex-1">

@@ -7,16 +7,16 @@
         @click.self="handleClose"
       >
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/70 transition-opacity"></div>
 
         <!-- Modal Container -->
         <div class="flex min-h-screen items-center justify-center p-4">
           <div
-            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white transition-all"
             @click.stop
           >
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-5">
+            <div class="bg-blue-600 px-6 py-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                   <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -61,7 +61,7 @@
                     <div class="absolute bottom-0 right-0 h-16 w-16 border-b-4 border-r-4 border-blue-500"></div>
                     
                     <!-- Línea de escaneo animada -->
-                    <div class="scan-line absolute left-0 right-0 top-0 h-1 bg-blue-500 shadow-lg shadow-blue-500/50"></div>
+                    <div class="scan-line absolute left-0 right-0 top-0 h-1 bg-blue-500"></div>
                   </div>
                 </div>
 
@@ -185,7 +185,7 @@
                       type="button"
                       @click="confirmAcceso"
                       :disabled="confirming"
-                      class="flex-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 px-3 py-2 text-sm font-bold text-white shadow-lg transition-all hover:shadow-xl active:scale-95 disabled:opacity-50"
+                      class="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:opacity-50"
                     >
                       <span v-if="confirming" class="flex items-center justify-center space-x-1">
                         <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">

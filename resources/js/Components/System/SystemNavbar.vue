@@ -21,7 +21,7 @@ const toggleSidebarCollapse = () => emit('toggle-sidebar-collapse')
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 w-full border-b border-theme-primary bg-theme-navbar/95 backdrop-blur-sm shadow-theme-sm">
+  <header class="sticky top-0 z-30 w-full border-b border-theme-primary bg-theme-navbar shadow-theme-sm">
     <div class="flex h-16 items-center justify-between px-2 sm:px-4 lg:px-6">
       <div class="flex items-center gap-2 sm:gap-3">
         <!-- Mobile menu button -->

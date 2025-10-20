@@ -22,7 +22,7 @@ const loadingActivity = ref(true)
 const recentRegistrations = ref([])
 const loadingRegistrations = ref(true)
 
-// �📊 Estado para gráficos
+// Estado para gráficos
 const loadingCharts = ref(true)
 const chartData = ref({
   accesosPorHora: null,
@@ -34,13 +34,13 @@ const chartData = ref({
 // Tema
 const { isDark, toggleTheme } = useTheme()
 
-// 🔐 Estado para el botón de login con toque largo
+// Estado para el botón de login con toque largo
 const longPressTimer = ref(null)
 const longPressProgress = ref(0)
 const isLongPressing = ref(false)
 const LONG_PRESS_DURATION = 3000 // 3 segundos
 
-// 🎨 Datos para los cubitos animados - Color corporativo verde SENA
+// Datos para los cubitos animados - Color corporativo verde SENA
 const statsData = [
   { color: '#39A900', icon: 'users', label: 'Usuarios', value: props.estadisticas?.total_personas || 0 },
   { color: '#39A900', icon: 'user-check', label: 'Activos Hoy', value: props.estadisticas?.accesos_hoy || 0 },
@@ -172,7 +172,7 @@ onMounted(() => {
   }
 })
 
-// 🔥 Actividad en Tiempo Real con WebSockets - Solo mostrar últimos 3
+//Actividad en Tiempo Real con WebSockets - Solo mostrar últimos 3
 const fetchRecentActivity = async () => {
   try {
     const response = await fetch('/api/accesos/recientes')
@@ -186,7 +186,7 @@ const fetchRecentActivity = async () => {
   }
 }
 
-// 👥 Registros Recientes de Personas - Solo mostrar últimos 3
+//Registros Recientes de Personas - Solo mostrar últimos 3
 const fetchRecentRegistrations = async () => {
   try {
     const response = await fetch('/api/personas/recientes')
@@ -200,7 +200,7 @@ const fetchRecentRegistrations = async () => {
   }
 }
 
-// 📊 Obtener datos para los gráficos
+//Obtener datos para los gráficos
 const fetchChartData = async () => {
   try {
     const response = await fetch('/api/analytics/charts')
@@ -389,7 +389,7 @@ const handleLoginPressCancel = () => {
 
   <div class="min-h-screen bg-theme-primary text-theme-primary flex flex-col">
     <!-- Header fijo -->
-    <header class="bg-theme-navbar border-b-2 border-theme-primary px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0 sticky top-0 z-50 shadow-lg">
+    <header class="bg-theme-navbar border-b-2 border-theme-primary px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex-shrink-0 sticky top-0 z-50">
       <div class="max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex items-center justify-between gap-3">
         <!-- Logo -->
         <div class="flex items-center gap-2 sm:gap-3 lg:gap-4">
@@ -429,7 +429,7 @@ const handleLoginPressCancel = () => {
             </Link>
           </template>
           <template v-else>
-            <!-- 🔐 Botón con Toque Largo: Click normal = login usuarios | Mantener 3s = login sistema -->
+            <!-- Botón con Toque Largo: Click normal = login usuarios | Mantener 3s = login sistema -->
             <Link
               :href="route('login')"
               @mousedown="handleLoginPressStart"
@@ -449,7 +449,7 @@ const handleLoginPressCancel = () => {
               <!-- Barra de progreso circular -->
               <div
                 v-if="isLongPressing"
-                class="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-amber-500/20 to-amber-600/20 dark:from-amber-500/30 dark:via-amber-400/30 dark:to-amber-300/30"
+                class="absolute inset-0 bg-amber-500/20 dark:bg-amber-500/30"
                 :style="{ width: `${longPressProgress}%` }"
               ></div>
 
@@ -484,7 +484,7 @@ const handleLoginPressCancel = () => {
     <main class="flex-1 px-2 sm:px-4 lg:px-6 xl:px-8 py-3 sm:py-4 lg:py-6">
       <div class="max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex flex-col">
 
-        <!-- 🎨 Stats Cubitos Animados - Responsive para todas las pantallas -->
+        <!--  Stats Cubitos Animados - Responsive para todas las pantallas -->
         <div class="w-full mb-6 sm:mb-8 lg:mb-10 mt-4 sm:mt-6 px-1 sm:px-4 lg:px-6 flex-shrink-0">
           <div class="container-items">
             <button v-for="(stat, index) in statsData" :key="index" class="item-color"
@@ -509,10 +509,10 @@ const handleLoginPressCancel = () => {
           </div>
         </div>
 
-        <!-- 📋 Sección de Tablas - Full Width, Solo 3 Registros Visibles -->
+        <!-- Sección de Tablas - Full Width, Solo 3 Registros Visibles -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
 
-          <!-- 🔥 Actividad en Tiempo Real -->
+          <!-- Actividad en Tiempo Real -->
           <div class="relative flex-shrink-0">
             
             <!-- Card Compacta - Solo 3 registros, sin scroll -->
@@ -662,7 +662,7 @@ const handleLoginPressCancel = () => {
             <!-- Card Compacta - Solo 3 registros, sin scroll -->
             <div class="bg-theme-card border-2 border-theme-primary rounded-xl shadow-theme-xl overflow-hidden">
               <!-- Encabezado -->
-              <div class="bg-purple-600 dark:bg-purple-700 px-4 py-3 flex items-center justify-between">
+              <div class="bg-blue-500 dark:bg-blue-700 px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div class="w-9 h-9 bg-purple-700 dark:bg-purple-800 rounded-lg flex items-center justify-center relative">
                     <Icon name="user-plus" :size="18" class="text-white" />
@@ -679,7 +679,7 @@ const handleLoginPressCancel = () => {
               </div>
 
               <!-- Lista de Registros - Solo 3 visibles, sin scroll -->
-              <div class="p-3 sm:p-4 bg-theme-secondary">
+              <div class="p-3 sm:p-4 ">
                 <div class="space-y-2">
                   <!-- Loading State - Solo 3 items -->
                   <template v-if="loadingRegistrations">

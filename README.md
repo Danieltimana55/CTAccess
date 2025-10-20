@@ -15,63 +15,63 @@ Sistema integral de gestión y control de acceso para instituciones, con soporte
 
 ---
 
-## 📋 Descripción
+## Descripción
 
 **CTAccess** es una aplicación web full-stack diseñada para gestionar el control de acceso en instituciones. Permite:
 
-- 👥 **Registro y gestión de personas** (empleados, visitantes, estudiantes, etc.)
-- 🚗 **Control de vehículos** asociados a cada persona
-- 💻 **Gestión de portátiles** con códigos QR únicos
-- 📊 **Dashboard en tiempo real** con WebSockets (Laravel Reverb)
-- 🔐 **Sistema de autenticación multi-guard** (personas y usuarios del sistema)
-- 🎫 **Verificación por QR** para entrada y salida
-- 📈 **Analytics y reportes** de accesos
-- 👮 **Roles y permisos** (Administrador y Celador)
+- **Registro y gestión de personas** (empleados, visitantes, estudiantes, etc.)
+- **Control de vehículos** asociados a cada persona
+- **Gestión de portátiles** con códigos QR únicos
+- **Dashboard en tiempo real** con WebSockets (Laravel Reverb)
+- **Sistema de autenticación multi-guard** (personas y usuarios del sistema)
+- **Verificación por QR** para entrada y salida
+- **Analytics y reportes** de accesos
+- **Roles y permisos** (Administrador y Celador)
 
-## ✨ Características
+## Características
 
-### 🔐 Sistema de Autenticación Dual
+### Sistema de Autenticación Dual
 - **Guard Web**: Para personas registradas (empleados, visitantes)
 - **Guard System**: Para usuarios del sistema (administradores, celadores)
 - Autenticación basada en Laravel Breeze + Inertia.js
 - Sistema RBAC (Role-Based Access Control) completo
 
-### 📊 Dashboard Analítico
+### Dashboard Analítico
 - Gráficos en tiempo real con Chart.js
 - Visualización de accesos por hora
 - Comparativas de entradas/salidas
 - Tendencias mensuales
 - Actualizaciones en vivo mediante WebSockets
 
-### 🎯 Gestión de Accesos
+### Gestión de Accesos
 - Registro de entrada/salida con timestamp
 - Asociación de portátiles y vehículos por acceso
 - Estados: `activo`, `finalizado`, `incidencia`
 - Historial completo de accesos
 - Verificación mediante escaneo de QR
 
-### 👥 Gestión de Personas
+### Gestión de Personas
 - CRUD completo con API RESTful
 - Validaciones robustas (documentos únicos)
 - Asociación múltiple de portátiles y vehículos
 - Generación automática de códigos QR
 - Sistema de perfiles personales
 
-### 🔧 Panel de Administración
+### Panel de Administración
 - Gestión de usuarios del sistema
 - Control de permisos granular
 - Administración de personas, portátiles y vehículos
 - Reportes y estadísticas
 - Gestión de incidencias con prioridades
 
-### 🛡️ Panel de Celador
+### Panel de Celador
 - Registro rápido de accesos
 - Verificación QR en tiempo real
 - Vista de accesos activos
 - Historial del día
 - Gestión de incidencias
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 ### Backend
 - **Laravel 12.0** - Framework PHP
@@ -96,7 +96,7 @@ Sistema integral de gestión y control de acceso para instituciones, con soporte
 - **Concurrently** - Desarrollo multi-proceso
 - **Laravel Pail** - Logs en tiempo real
 
-## 📦 Instalación
+## Instalación
 
 ### Requisitos Previos
 ```bash
@@ -106,13 +106,13 @@ Node.js >= 18
 MySQL >= 8.0
 ```
 
-### 1️⃣ Clonar el repositorio
+### Clonar el repositorio
 ```bash
 git clone https://github.com/Danieltimana55/CTAccess.git
 cd CTAccess
 ```
 
-### 2️⃣ Instalar dependencias
+### Instalar dependencias
 ```bash
 # Backend
 composer install
@@ -121,7 +121,7 @@ composer install
 npm install
 ```
 
-### 3️⃣ Configurar entorno
+### Configurar entorno
 ```bash
 # Copiar archivo de configuración
 cp .env.example .env
@@ -130,7 +130,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### 4️⃣ Configurar base de datos
+### Configurar base de datos
 Editar `.env` con tus credenciales:
 ```env
 DB_CONNECTION=mysql
@@ -141,12 +141,12 @@ DB_USERNAME=tu_usuario
 DB_PASSWORD=tu_contraseña
 ```
 
-### 5️⃣ Migrar base de datos
+### Migrar base de datos
 ```bash
 php artisan migrate --seed
 ```
 
-### 6️⃣ Iniciar desarrollo
+### Iniciar desarrollo
 ```bash
 # Opción 1: Comando integrado (servidor + queue + logs + vite)
 composer dev
@@ -157,12 +157,12 @@ php artisan queue:listen
 npm run dev
 ```
 
-### 7️⃣ Acceder a la aplicación
+### Acceder a la aplicación
 ```
 http://localhost:8000
 ```
 
-## 🗂️ Arquitectura
+## Arquitectura
 
 ### Estructura del Proyecto
 ```
@@ -212,7 +212,7 @@ CTAccess/
 - **Incidencia** - Registro de incidencias
 - **Role/Permission** - Sistema RBAC
 
-## 📡 Documentación de la API
+## Documentación de la API
 
 ### Endpoints Principales
 
@@ -327,7 +327,7 @@ Content-Type: application/json
 }
 ```
 
-## 🚀 Guías de Desarrollo
+## Guías de Desarrollo
 
 ### Integración con Vue 3
 
@@ -505,7 +505,7 @@ onMounted(() => {
 </script>
 ```
 
-## 🔒 Sistema de Roles y Permisos
+## Sistema de Roles y Permisos
 
 ### Roles Disponibles
 - **Administrador**: Acceso completo al sistema
@@ -523,7 +523,7 @@ Route::middleware('check.system.role:administrador')->group(function () {
 });
 ```
 
-## 📊 Analytics y Reportes
+## Analytics y Reportes
 
 ### Gráficos Disponibles
 1. **Accesos por Hora**: Distribución de accesos en 24 horas
@@ -557,7 +557,7 @@ GET /api/analytics/charts
 }
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Ejecutar todas las pruebas
@@ -567,7 +567,7 @@ composer test
 php artisan test --filter PersonaTest
 ```
 
-## 📝 Comandos Artisan Útiles
+## Comandos Artisan Útiles
 
 ```bash
 # Limpiar caché
@@ -594,7 +594,7 @@ php artisan make:model Nombre -mf
 php artisan make:request NombreRequest
 ```
 
-## 🚢 Deployment
+## Deployment
 
 ### Railway (Configurado)
 El proyecto incluye configuración para Railway:
@@ -623,7 +623,7 @@ REVERB_APP_KEY=
 REVERB_APP_SECRET=
 ```
 
-## 🤝 Contribuir
+## Contribuir
 
 1. Fork el proyecto
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
@@ -631,15 +631,15 @@ REVERB_APP_SECRET=
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
-## 👥 Autores
+## Autores
 
 - **Daniel Timana** - [@Danieltimana55](https://github.com/Danieltimana55)
 
-## 🙏 Agradecimientos
+## Agradecimientos
 
 - Laravel Framework
 - Vue.js Community

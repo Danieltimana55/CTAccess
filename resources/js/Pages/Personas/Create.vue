@@ -19,7 +19,7 @@
       leave-to-class="opacity-0 translate-y-4"
     >
       <div v-if="showSuccessModal" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] max-w-md w-full mx-4">
-        <div class="bg-gradient-to-r from-sena-green-600 to-sena-green-700 dark:from-cyan-600 dark:to-cyan-700 text-white rounded-xl shadow-2xl border-2 border-white/20 overflow-hidden p-4">
+        <div class="bg-sena-green-600 dark:bg-cyan-600 text-white rounded-xl border-2 border-white/20 overflow-hidden p-4">
           <div class="flex items-start gap-3">
             <!-- Icono animado -->
             <div class="flex-shrink-0">
@@ -64,7 +64,7 @@
 
       <!-- Indicador de progreso horizontal superior -->
       <div class="w-full max-w-md sm:max-w-2xl lg:max-w-4xl mb-3 sm:mb-4">
-        <div class="bg-theme-card backdrop-blur-lg rounded-xl shadow-theme-md p-3 sm:p-4 border border-theme-primary">
+        <div class="bg-theme-card rounded-xl p-3 sm:p-4 border border-theme-primary">
           <div class="flex items-center justify-between mb-2 sm:mb-3">
             <div v-for="(step, index) in totalSteps" :key="step" class="flex items-center flex-1">
               <!-- Círculo del paso -->
@@ -101,7 +101,7 @@
       <div class="w-full max-w-md sm:max-w-2xl lg:max-w-4xl">
 
       <!-- Formulario paso a paso -->
-      <div class="bg-theme-card backdrop-blur-lg rounded-xl shadow-theme-lg p-4 sm:p-5 lg:p-6 border border-theme-primary">
+      <div class="bg-theme-card rounded-xl p-4 sm:p-5 lg:p-6 border border-theme-primary">
 
         <!-- Paso 1: Información Personal -->
         <div v-if="currentStep === 1" class="space-y-3 sm:space-y-4">
@@ -215,7 +215,7 @@
             </div>
             <h3 class="text-base sm:text-lg font-semibold text-theme-primary mb-1.5">Sin portátiles registrados</h3>
             <p class="text-theme-muted mb-4 max-w-md mx-auto text-xs sm:text-sm">Agrega los portátiles que esta persona utilizará. Puedes omitir este paso si no aplica.</p>
-            <button type="button" @click="addPortatil" class="inline-flex items-center px-5 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500 text-white font-medium transition-all duration-200 shadow-md hover:shadow-lg text-sm">
+            <button type="button" @click="addPortatil" class="inline-flex items-center px-5 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500 text-white font-medium transition-all duration-200 text-sm">
               <Icon name="plus" :size="16" class="mr-2" />Agregar Primer Portátil
             </button>
           </div>
@@ -262,7 +262,7 @@
             </div>
             <h3 class="text-base sm:text-lg font-semibold text-theme-primary mb-1.5">Sin vehículos registrados</h3>
             <p class="text-theme-muted mb-4 max-w-md mx-auto text-xs sm:text-sm">Registra los vehículos que esta persona utiliza para acceder. Puedes omitir este paso si no aplica.</p>
-            <button type="button" @click="addVehiculo" class="inline-flex items-center px-5 py-2.5 rounded-lg bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-black font-medium transition-all duration-200 shadow-md hover:shadow-lg text-sm">
+            <button type="button" @click="addVehiculo" class="inline-flex items-center px-5 py-2.5 rounded-lg bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500 text-black font-medium transition-all duration-200 text-sm">
               <Icon name="plus" :size="16" class="mr-2" />Agregar Primer Vehículo
             </button>
           </div>
@@ -415,11 +415,11 @@
               <Icon name="x" :size="16" class="mr-1.5" />Cancelar
             </Link>
 
-            <button v-if="currentStep < totalSteps" type="button" @click="nextStep" :disabled="!canProceedToNextStep()" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
+            <button v-if="currentStep < totalSteps" type="button" @click="nextStep" :disabled="!canProceedToNextStep()" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               Siguiente<Icon name="arrow-right" :size="16" class="ml-1.5" />
             </button>
 
-            <button v-else type="submit" @click="submit" :disabled="form.processing" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
+            <button v-else type="submit" @click="submit" :disabled="form.processing" class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-sena-green-600 hover:bg-sena-green-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               <Icon v-if="form.processing" name="loader" :size="16" class="animate-spin mr-1.5" />
               <span v-if="form.processing">Creando...</span><span v-else><Icon name="check" :size="16" class="mr-1.5" />Crear Persona</span>
             </button>

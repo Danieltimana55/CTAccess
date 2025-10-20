@@ -328,11 +328,11 @@
   color: #50E5F9;
 }
 
-/* Efectos de glow corporativo */
+/* Efectos de glow corporativo - REMOVIDOS PARA ESTILO MATE */
 .glow-corporate {
-  box-shadow: 0 0 20px rgba(45, 135, 0, 0.3);
+  box-shadow: none;
 }
 
 .dark .glow-corporate {
-  box-shadow: 0 0 20px rgba(43, 123, 191, 0.3);
+  box-shadow: none;
 }

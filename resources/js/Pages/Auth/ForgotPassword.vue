@@ -42,7 +42,7 @@ const submit = () => {
             </div>
 
             <!-- Formulario -->
-            <div class="bg-theme-card backdrop-blur-lg rounded-2xl shadow-theme-lg p-8 border border-theme-primary">
+            <div class="bg-theme-card rounded-2xl p-8 border border-theme-primary">
                 <div class="mb-6 p-4 rounded-lg text-sm border border-theme-secondary" 
                      style="background-color: rgba(80, 229, 249, 0.1); color: #50E5F9;">
                     <div class="flex items-start">

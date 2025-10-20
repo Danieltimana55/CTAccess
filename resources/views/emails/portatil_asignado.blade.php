@@ -144,7 +144,7 @@
     <div class="email-container">
         <!-- Header -->
         <div class="header">
-            <div class="icon">💻</div>
+            <div class="icon"></div>
             <h1>Portátil Asignado</h1>
             <p style="margin: 10px 0 0 0; opacity: 0.9;">Sistema de Control de Acceso</p>
         </div>
@@ -165,29 +165,29 @@
                 <h3 style="margin: 0 0 15px 0; color: #39A900;">📋 Información del Portátil</h3>
                 
                 <div class="info-row">
-                    <span class="info-label">🔢 Serial:</span>
+                    <span class="info-label"> Serial:</span>
                     <span class="info-value">{{ $portatil->serial }}</span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">🏷️ Marca:</span>
+                    <span class="info-label"> Marca:</span>
                     <span class="info-value">{{ $portatil->marca }}</span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">📱 Modelo:</span>
+                    <span class="info-label"> Modelo:</span>
                     <span class="info-value">{{ $portatil->modelo }}</span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">📅 Asignado el:</span>
+                    <span class="info-label"> Asignado el:</span>
                     <span class="info-value">{{ $portatil->created_at->format('d/m/Y H:i') }}</span>
                 </div>
             </div>
 
             <!-- Código QR -->
             <div class="qr-container">
-                <div class="qr-title">🔐 Tu Código QR Único</div>
+                <div class="qr-title">Tu Código QR Único</div>
                 <p style="color: #666; margin-bottom: 15px;">
                     Utiliza este código para registrar el ingreso y salida del portátil
                 </p>
@@ -206,7 +206,7 @@
 
             <!-- Instrucciones -->
             <div class="instructions">
-                <strong>📌 Instrucciones de Uso:</strong>
+                <strong>Instrucciones de Uso:</strong>
                 <ul>
                     <li><strong>Descarga el código QR</strong> adjunto o guarda esta imagen</li>
                     <li>Puedes <strong>imprimirlo</strong> y pegarlo en tu portátil</li>
@@ -218,7 +218,7 @@
 
             <!-- Alerta de Seguridad -->
             <div class="alert-box">
-                <strong>⚠️ Importante:</strong>
+                <strong> Importante:</strong>
                 Este portátil está registrado a tu nombre. Eres responsable de su uso y custodia. 
                 Reporta cualquier pérdida o daño inmediatamente al área de sistemas.
             </div>

@@ -28,7 +28,7 @@
 
     <!-- QR de la Persona -->
     <div class="qr-container">
-        <div class="qr-title">📋 Tu QR Personal</div>
+        <div class="qr-title">Tu QR Personal</div>
         <p>Este QR codifica tu documento de identidad:</p>
         @if($persona->qrCode)
             <p>
@@ -40,7 +40,7 @@
     <!-- QR de Portátiles -->
     @if(isset($portatiles) && $portatiles->count() > 0)
         <div class="qr-container">
-            <div class="qr-title">💻 QR de tus Portátiles</div>
+            <div class="qr-title">QR de tus Portátiles</div>
             <p>Se han registrado {{ $portatiles->count() }} portátil(es):</p>
             @foreach($portatiles as $index => $portatil)
                 <div style="margin: 15px 0; padding: 10px; background-color: #fff; border-left: 3px solid #50E5F9;">

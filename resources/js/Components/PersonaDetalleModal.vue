@@ -98,12 +98,12 @@ const handleKeydown = (e) => {
     <Transition name="modal">
       <div
         v-if="show && persona"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
         @click.self="close"
         @keydown="handleKeydown"
       >
         <!-- Modal Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
           <!-- Header Compacto -->
           <div class="bg-[#00304D] px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -283,10 +283,10 @@ const handleKeydown = (e) => {
     <Transition name="modal">
       <div
         v-if="showQrPreview && qrImageUrl"
-        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70"
         @click.self="closeQrPreview"
       >
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6">
           <!-- Header -->
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">

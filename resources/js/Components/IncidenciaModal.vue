@@ -7,16 +7,16 @@
         @click.self="$emit('close')"
       >
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/70 transition-opacity"></div>
 
         <!-- Modal Container -->
         <div class="flex min-h-screen items-center justify-center p-4">
           <div
-            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white transition-all"
             @click.stop
           >
             <!-- Header -->
-            <div class="bg-gradient-to-r from-yellow-600 to-orange-500 px-6 py-5">
+            <div class="bg-orange-600 px-6 py-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                   <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">

@@ -6,13 +6,13 @@
         class="fixed inset-0 z-50 overflow-y-auto"
         @click.self="handleClose"
       >
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/50 transition-opacity"></div>
         <div class="flex min-h-screen items-center justify-center p-4">
           <div
-            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white transition-all"
             @click.stop
           >
-            <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-5">
+            <div class="bg-emerald-600 px-6 py-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                   <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -107,7 +107,7 @@
                   <button
                     type="submit"
                     :disabled="!cedula.trim() || searching"
-                    class="flex-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-3 font-bold text-white shadow-lg transition-all hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    class="flex-1 rounded-lg bg-emerald-600 px-4 py-3 font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <span v-if="searching" class="flex items-center justify-center space-x-2">
                       <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -223,7 +223,7 @@
                     type="button"
                     @click="confirmAcceso(false)"
                     :disabled="confirming || verificandoEquipo"
-                    class="flex-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 px-4 py-3 font-bold text-white shadow-lg transition-all hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    class="flex-1 rounded-lg bg-emerald-600 px-4 py-3 font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <span v-if="confirming" class="flex items-center justify-center space-x-2">
                       <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -245,7 +245,7 @@
                     type="button"
                     @click="confiarSinVerificar"
                     :disabled="confirming || verificandoEquipo"
-                    class="flex-1 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-500 px-4 py-3 font-bold text-white shadow-lg transition-all hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                    class="flex-1 rounded-lg bg-yellow-600 px-4 py-3 font-bold text-white transition-all hover:bg-yellow-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <span v-if="confirming" class="flex items-center justify-center space-x-2">
                       <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -274,12 +274,12 @@
             class="fixed inset-0 z-[60] flex items-center justify-center p-4"
             @click.self="cancelarVerificacion"
           >
-            <div class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
-            <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div class="fixed inset-0 bg-black/80"></div>
+            <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white">
               <!-- Header -->
-              <div class="bg-gradient-to-r px-6 py-4" :class="{
-                'from-blue-600 to-blue-500': tipoEquipoVerificar === 'portatil',
-                'from-orange-600 to-orange-500': tipoEquipoVerificar === 'vehiculo'
+              <div class="px-6 py-4" :class="{
+                'bg-blue-600': tipoEquipoVerificar === 'portatil',
+                'bg-orange-600': tipoEquipoVerificar === 'vehiculo'
               }">
                 <div class="flex items-center justify-between">
                   <div>
@@ -319,7 +319,7 @@
                     <div class="absolute bottom-0 right-0 h-8 w-8 border-b-4 border-r-4 border-white"></div>
                     
                     <!-- Línea de escaneo animada -->
-                    <div class="scan-line absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                    <div class="scan-line absolute left-0 right-0 h-1 bg-white"></div>
                   </div>
                 </div>
               </div>

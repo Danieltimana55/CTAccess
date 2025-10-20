@@ -83,7 +83,7 @@ onMounted(() => {
   >
     <div
       v-if="isLoading"
-      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40">
     >
       <!-- Loader Animado -->
       <div class="loader"></div>
