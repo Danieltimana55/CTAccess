@@ -38,7 +38,7 @@ const formatDate = (dateString) => {
 const getTipoColor = (tipo) => {
   const colores = {
     'seguridad': 'text-red-600 bg-red-600/10 border-red-600/20',
-    'acceso': 'text-[#50E5F9] bg-[#50E5F9]/10 border-[#50E5F9]/20',
+    'acceso': 'text-[#00304D] bg-[#00304D]/10 border-[#00304D]/20',
     'equipamiento': 'text-purple-600 bg-purple-600/10 border-purple-600/20',
     'comportamiento': 'text-[#FDC300] bg-[#FDC300]/10 border-[#FDC300]/20',
     'otro': 'text-gray-600 bg-gray-600/10 border-gray-600/20'
@@ -189,10 +189,10 @@ const submit = () => {
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs text-theme-secondary">Hoy</p>
-                <p class="text-xl sm:text-2xl font-bold text-[#50E5F9] mt-0.5">{{ estadisticas?.hoy ?? 0 }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-[#FDC300] mt-0.5">{{ estadisticas?.hoy ?? 0 }}</p>
               </div>
-              <div class="p-2 bg-[#50E5F9]/10 rounded-lg">
-                <Icon name="clock" :size="18" class="text-[#50E5F9]" />
+              <div class="p-2 bg-[#FDC300]/10 rounded-lg">
+                <Icon name="clock" :size="18" class="text-[#FDC300]" />
               </div>
             </div>
           </div>
@@ -390,8 +390,8 @@ const submit = () => {
                   </td>
                   <td class="px-3 py-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-7 h-7 rounded-lg bg-[#50E5F9]/10 flex items-center justify-center">
-                        <Icon name="user-check" :size="12" class="text-[#50E5F9]" />
+                      <div class="w-7 h-7 rounded-lg bg-[#00304D]/10 flex items-center justify-center">
+                        <Icon name="user-check" :size="12" class="text-[#00304D]" />
                       </div>
                       <div class="min-w-0">
                         <p class="font-medium text-theme-primary text-sm truncate">{{ i.reportadoPor?.nombre ?? 'Sistema' }}</p>

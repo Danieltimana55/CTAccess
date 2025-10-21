@@ -42,91 +42,86 @@ const getIconName = (label) => {
 <template>
   <aside :class="[
     'hidden lg:flex lg:shrink-0 lg:flex-col lg:border-r border-theme-primary bg-theme-sidebar shadow-theme-sm transition-all duration-300',
-    collapsed ? 'lg:w-16' : 'lg:w-64'
+    collapsed ? 'lg:w-14' : 'lg:w-60'
   ]">
-    <!-- Collapse Button (Moved to top) -->
-    <div class="border-b border-theme-primary bg-theme-secondary p-2">
+    <!-- Collapse Button -->
+    <div class="border-b border-theme-primary bg-theme-secondary px-2 py-1.5">
       <button
         @click="emit('toggle-collapse')"
         :class="[
-          'group relative w-full overflow-hidden rounded-lg p-3 transition-all duration-300',
+          'group relative w-full overflow-hidden rounded-md p-2 transition-all duration-200',
           'bg-sena-green-500/10 dark:bg-blue-500/10',
           'hover:bg-sena-green-500/20 dark:hover:bg-blue-500/20',
-          'border border-sena-green-500/30 dark:border-cyan-500/30',
-          'hover:border-sena-green-500 dark:hover:border-cyan-500',
-          'flex justify-center'
+          'border border-sena-green-500/20 dark:border-cyan-500/20',
+          'hover:border-sena-green-500/40 dark:hover:border-cyan-500/40',
+          'flex items-center justify-center'
         ]"
         :title="collapsed ? 'Expandir menú' : 'Contraer menú'"
       >
-        <div class="flex items-center justify-center rounded-lg bg-sena-green-500 dark:bg-cyan-500 p-2 text-white transition-all duration-300">
-          <Icon name="menu" :size="18" />
-        </div>
+        <Icon :name="collapsed ? 'chevron-right' : 'chevron-left'" :size="16" class="text-sena-green-600 dark:text-cyan-500" />
       </button>
     </div>
 
     <!-- Rol Badge -->
-    <div v-if="!collapsed" class="flex items-center gap-3 border-b border-theme-primary bg-theme-secondary p-4">
-      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-sena-green-600 dark:bg-cyan-600">
-        <Icon name="user" :size="16" class="text-white" />
+    <div v-if="!collapsed" class="flex items-center gap-2 border-b border-theme-primary bg-theme-secondary px-3 py-2.5">
+      <div class="flex h-7 w-7 items-center justify-center rounded-full bg-sena-green-600 dark:bg-cyan-600">
+        <Icon name="user" :size="14" class="text-white" />
       </div>
-      <div>
-        <div class="text-xs font-medium text-theme-secondary uppercase tracking-wide">Rol Actual</div>
-        <div class="text-sm font-semibold text-theme-primary">{{ role || '—' }}</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[10px] font-medium text-theme-secondary uppercase tracking-wider">Rol</div>
+        <div class="text-xs font-semibold text-theme-primary truncate">{{ role || '—' }}</div>
       </div>
     </div>
 
     <!-- Collapsed role indicator -->
-    <div v-if="collapsed" class="flex justify-center border-b border-theme-primary bg-theme-secondary p-4">
-      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-sena-green-600 dark:bg-cyan-600" :title="`Rol: ${role || '—'}`">
-        <Icon name="user" :size="16" class="text-white" />
+    <div v-if="collapsed" class="flex justify-center border-b border-theme-primary bg-theme-secondary py-2">
+      <div class="flex h-7 w-7 items-center justify-center rounded-full bg-sena-green-600 dark:bg-cyan-600" :title="`Rol: ${role || '—'}`">
+        <Icon name="user" :size="14" class="text-white" />
       </div>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 space-y-2 p-3">
+    <nav class="flex-1 space-y-1 px-2 py-2 overflow-y-auto">
       <button
         v-for="item in menus"
         :key="item.route"
         :class="[
-          'group flex w-full items-center rounded-lg text-left font-semibold transition-all duration-200 ease-in-out',
-          collapsed ? 'px-2 py-3 justify-center' : 'px-4 py-3',
+          'group flex w-full items-center rounded-md text-left font-medium transition-all duration-200',
+          collapsed ? 'px-1.5 py-2.5 justify-center' : 'px-3 py-2.5',
           isActiveRoute(item.route)
-            ? 'bg-sena-green-600 dark:bg-blue-600 text-white' + (collapsed ? '' : ' border-l-4 border-sena-green-300 dark:border-cyan-400')
-            : 'text-theme-secondary hover:bg-sena-green-50 dark:hover:bg-sena-blue-900/20 hover:text-sena-green-700 dark:hover:text-cyan-400 hover:border-l-4 hover:border-sena-green-500 dark:hover:border-cyan-500'
+            ? 'bg-sena-green-600 dark:bg-blue-600 text-white shadow-sm' + (collapsed ? '' : ' border-l-3 border-sena-green-300 dark:border-cyan-400')
+            : 'text-theme-secondary hover:bg-sena-green-50 dark:hover:bg-sena-blue-900/20 hover:text-sena-green-700 dark:hover:text-cyan-400'
         ]"
         @click="go(item.route)"
         :title="collapsed ? item.label : undefined"
       >
-        <div :class="['flex items-center', collapsed ? '' : 'gap-3.5']">
+        <div :class="['flex items-center', collapsed ? '' : 'gap-2.5']">
           <div :class="[
-            'flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200',
+            'flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200',
             isActiveRoute(item.route)
               ? 'bg-white/20 text-white'
-              : 'bg-theme-tertiary text-theme-muted group-hover:bg-sena-green-500 dark:group-hover:bg-cyan-500 group-hover:text-white'
+              : 'text-theme-muted group-hover:text-sena-green-600 dark:group-hover:text-cyan-400'
           ]">
-            <Icon :name="getIconName(item.label)" :size="18" />
+            <Icon :name="getIconName(item.label)" :size="16" />
           </div>
           <span v-if="!collapsed" :class="[
-            'text-[15px] font-semibold transition-all duration-200',
+            'text-[13px] font-medium transition-all duration-200 truncate',
             isActiveRoute(item.route)
-              ? 'text-white'
-              : 'group-hover:translate-x-1'
+              ? 'text-white font-semibold'
+              : 'group-hover:translate-x-0.5'
           ]">{{ item.label }}</span>
         </div>
       </button>
     </nav>
 
-    <!-- Footer with version -->
-    <div class="border-t border-theme-primary bg-theme-secondary">
-      <!-- Version -->
-      <div class="px-3 py-3">
-        <div v-if="!collapsed" class="text-xs text-theme-muted text-center">
-          CTAccess v2.0
-        </div>
-        <div v-else class="flex justify-center">
-          <div class="text-xs text-theme-muted" title="CTAccess v2.0">
-            CT
-          </div>
+    <!-- Footer -->
+    <div class="border-t border-theme-primary bg-theme-secondary px-2 py-1.5">
+      <div v-if="!collapsed" class="text-[10px] text-theme-muted text-center font-medium">
+        CTAccess v2.0
+      </div>
+      <div v-else class="flex justify-center">
+        <div class="text-[10px] text-theme-muted font-medium" title="CTAccess v2.0">
+          CT
         </div>
       </div>
     </div>

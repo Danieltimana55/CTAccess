@@ -19,8 +19,7 @@ class AccesoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Acceso::with(['persona', 'portatil', 'vehiculo'])
-            ->latest('fecha_entrada');
+        $query = Acceso::with(['persona', 'portatil', 'vehiculo']);
 
         // Filtro de búsqueda por persona
         if ($search = $request->get('q')) {
@@ -34,6 +33,66 @@ class AccesoController extends Controller
         // Filtro por estado
         if ($estado = $request->get('estado')) {
             $query->where('estado', $estado);
+        }
+
+        // Filtro por tipo de persona
+        if ($tipoPersona = $request->get('tipo_persona')) {
+            $query->whereHas('persona', function ($q) use ($tipoPersona) {
+                $q->where('TipoPersona', $tipoPersona);
+            });
+        }
+
+        // Filtro por portátil
+        if ($tienePortatil = $request->get('tiene_portatil')) {
+            if ($tienePortatil === 'si') {
+                $query->whereNotNull('portatil_id');
+            } elseif ($tienePortatil === 'no') {
+                $query->whereNull('portatil_id');
+            }
+        }
+
+        // Filtro por vehículo
+        if ($tieneVehiculo = $request->get('tiene_vehiculo')) {
+            if ($tieneVehiculo === 'si') {
+                $query->whereNotNull('vehiculo_id');
+            } elseif ($tieneVehiculo === 'no') {
+                $query->whereNull('vehiculo_id');
+            }
+        }
+
+        // Filtro por rango de fechas
+        if ($fechaDesde = $request->get('fecha_desde')) {
+            $query->whereDate('fecha_entrada', '>=', $fechaDesde);
+        }
+        if ($fechaHasta = $request->get('fecha_hasta')) {
+            $query->whereDate('fecha_entrada', '<=', $fechaHasta);
+        }
+
+        // Ordenamiento
+        $orden = $request->get('orden', 'reciente');
+        switch ($orden) {
+            case 'antiguo':
+                $query->oldest('fecha_entrada');
+                break;
+            case 'nombre_asc':
+                $query->join('personas', 'accesos.persona_id', '=', 'personas.idPersona')
+                      ->orderBy('personas.Nombre', 'asc')
+                      ->select('accesos.*');
+                break;
+            case 'nombre_desc':
+                $query->join('personas', 'accesos.persona_id', '=', 'personas.idPersona')
+                      ->orderBy('personas.Nombre', 'desc')
+                      ->select('accesos.*');
+                break;
+            case 'duracion_asc':
+                $query->orderByRaw('TIMESTAMPDIFF(MINUTE, fecha_entrada, COALESCE(fecha_salida, NOW())) ASC');
+                break;
+            case 'duracion_desc':
+                $query->orderByRaw('TIMESTAMPDIFF(MINUTE, fecha_entrada, COALESCE(fecha_salida, NOW())) DESC');
+                break;
+            default: // reciente
+                $query->latest('fecha_entrada');
+                break;
         }
 
         $accesos = $query->paginate(15)->withQueryString();
@@ -77,6 +136,12 @@ class AccesoController extends Controller
             'filters' => [
                 'q' => $request->get('q'),
                 'estado' => $request->get('estado'),
+                'tipo_persona' => $request->get('tipo_persona'),
+                'tiene_portatil' => $request->get('tiene_portatil'),
+                'tiene_vehiculo' => $request->get('tiene_vehiculo'),
+                'fecha_desde' => $request->get('fecha_desde'),
+                'fecha_hasta' => $request->get('fecha_hasta'),
+                'orden' => $request->get('orden', 'reciente'),
             ],
             'accesos' => $accesos,
             'estadisticas' => $estadisticas,

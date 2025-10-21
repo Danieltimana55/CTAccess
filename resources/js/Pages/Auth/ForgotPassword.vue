@@ -44,9 +44,9 @@ const submit = () => {
             <!-- Formulario -->
             <div class="bg-theme-card rounded-2xl p-8 border border-theme-primary">
                 <div class="mb-6 p-4 rounded-lg text-sm border border-theme-secondary" 
-                     style="background-color: rgba(80, 229, 249, 0.1); color: #50E5F9;">
+                     style="background-color: rgba(80, 229, 249, 0.1); color: #FDC300;">
                     <div class="flex items-start">
-                        <Icon name="info" :size="20" class="mt-0.5 mr-3 flex-shrink-0" style="color: #50E5F9;" />
+                        <Icon name="info" :size="20" class="mt-0.5 mr-3 flex-shrink-0" style="color: #FDC300;" />
                         <div>
                             <p class="font-medium mb-1">¿Olvidaste tu contraseña?</p>
                             <p class="text-xs text-theme-muted">
@@ -110,7 +110,7 @@ const submit = () => {
                     <Link
                         :href="route('login')"
                         class="inline-flex items-center text-sm text-theme-secondary hover:text-theme-primary transition-colors duration-200"
-                        style="color: #50E5F9;"
+                        style="color: #FDC300;"
                     >
                         <Icon name="arrow-left" :size="16" class="mr-2" />
                         Volver al inicio de sesión
@@ -119,7 +119,7 @@ const submit = () => {
                         <Link
                             :href="route('home')"
                             class="text-sm text-theme-secondary hover:text-theme-primary transition-colors duration-200"
-                            style="color: #50E5F9;"
+                            style="color: #FDC300;"
                         >
                             ← Volver al inicio
                         </Link>

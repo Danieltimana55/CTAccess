@@ -65,8 +65,8 @@ Route::prefix('system')->name('system.')->group(function () {
             Route::resource('permissions', App\Http\Controllers\System\Admin\PermissionsController::class)->only(['index', 'store', 'update', 'destroy']);
             
             // Gestión de personas
-            Route::get('personas', [AdminDashboardController::class, 'personasView'])->name('personas');
-            Route::get('personas/data', [AdminDashboardController::class, 'personas'])->name('personas.data');
+            Route::get('personas', [App\Http\Controllers\System\Admin\PersonasController::class, 'index'])->name('personas');
+            Route::get('personas/data', [App\Http\Controllers\System\Admin\PersonasController::class, 'data'])->name('personas.data');
             Route::post('personas', [App\Http\Controllers\System\Admin\PersonasController::class, 'store'])->name('personas.store');
             Route::put('personas/{persona}', [App\Http\Controllers\System\Admin\PersonasController::class, 'update'])->name('personas.update');
             Route::delete('personas/{persona}', [App\Http\Controllers\System\Admin\PersonasController::class, 'destroy'])->name('personas.destroy');

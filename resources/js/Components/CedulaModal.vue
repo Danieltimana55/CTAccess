@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <Teleport to="body">
     <Transition name="modal">
       <div
@@ -12,40 +12,23 @@
             class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white transition-all"
             @click.stop
           >
-            <div class="bg-emerald-600 px-6 py-5">
+            <div class="bg-emerald-600 px-4 py-3">
               <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-bold text-white">Entrada Manual</h3>
-                    <p class="text-xs text-emerald-50">Búsqueda rápida por cédula</p>
-                  </div>
-                </div>
+                <h3 class="text-sm font-bold text-white">Entrada Manual por Cédula</h3>
                 <button
                   @click="handleClose"
-                  class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white transition-all hover:bg-white/30 active:scale-95"
+                  class="flex h-6 w-6 items-center justify-center rounded text-white/80 hover:text-white hover:bg-white/20 transition-colors"
                 >
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
               </div>
             </div>
-            <div class="p-6">
+            <div class="p-4">
               <form @submit.prevent="handleSearch" v-if="!personaInfo">
                 <div class="space-y-2">
-                  <label class="block text-sm font-medium text-gray-700">
-                    <div class="flex items-center space-x-2">
-                      <svg class="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                      </svg>
-                      <span>Número de Cédula</span>
-                    </div>
-                  </label>
+                  <label class="block text-xs font-medium text-gray-700">Número de Cédula</label>
                   <div class="relative">
                     <input
                       ref="cedulaInput"
@@ -54,212 +37,128 @@
                       inputmode="numeric"
                       pattern="[0-9]*"
                       placeholder="Ej: 123456789"
-                      class="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-lg font-medium text-gray-900 placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+                      class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                       :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500/20': error }"
                       @input="clearError"
                     />
-                    <div v-if="cedula" class="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div v-if="cedula" class="absolute right-2 top-1/2 -translate-y-1/2">
                       <button
                         type="button"
                         @click="clearInput"
-                        class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-all hover:bg-gray-300 active:scale-95"
+                        class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300"
                       >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                       </button>
                     </div>
                   </div>
                   <Transition name="error">
-                    <p v-if="error" class="text-sm text-red-600 flex items-center space-x-1">
-                      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                      </svg>
-                      <span>{{ error }}</span>
-                    </p>
+                    <p v-if="error" class="text-xs text-red-600">{{ error }}</p>
                   </Transition>
-                  <p class="text-xs text-gray-500 flex items-start space-x-1">
-                    <svg class="h-4 w-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                    </svg>
-                    <span>Ingresa solo números, sin espacios ni caracteres especiales</span>
-                  </p>
+                  <p class="text-[10px] text-gray-500">Solo números, sin espacios</p>
                 </div>
-                <div class="mt-4 hidden sm:flex items-center justify-center space-x-4 text-xs text-gray-500">
-                  <div class="flex items-center space-x-1">
-                    <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Enter</kbd>
-                    <span>Buscar</span>
-                  </div>
-                  <div class="flex items-center space-x-1">
-                    <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Esc</kbd>
-                    <span>Cerrar</span>
-                  </div>
-                </div>
-                <div class="mt-6 flex space-x-3">
+                <div class="mt-3 flex space-x-2">
                   <button
                     type="button"
                     @click="handleClose"
                     :disabled="searching"
-                    class="flex-1 rounded-lg border-2 border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-50"
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     :disabled="!cedula.trim() || searching"
-                    class="flex-1 rounded-lg bg-emerald-600 px-4 py-3 font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
                   >
-                    <span v-if="searching" class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>Buscando...</span>
-                    </span>
-                    <span v-else class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                      </svg>
-                      <span>Buscar Persona</span>
-                    </span>
+                    <span v-if="searching">Buscando...</span>
+                    <span v-else>Buscar</span>
                   </button>
                 </div>
               </form>
-              <div v-else class="space-y-4">
-                <div class="rounded-lg bg-emerald-50 border-2 border-emerald-200 p-4">
-                  <div class="flex items-start space-x-3">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white flex-shrink-0">
-                      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div v-else class="space-y-2">
+                <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-2">
+                  <div class="flex items-start space-x-2">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white flex-shrink-0">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                       </svg>
                     </div>
-                    <div class="flex-1">
-                      <h4 class="text-lg font-bold text-emerald-900">{{ personaInfo?.persona?.Nombre || 'Sin nombre' }}</h4>
-                      <p class="text-sm text-emerald-700">
-                        <span class="font-medium">Cédula:</span> {{ personaInfo?.persona?.documento || cedula }}
-                      </p>
-                      <p class="text-sm text-emerald-700">
-                        <span class="font-medium">Tipo:</span> {{ personaInfo?.persona?.TipoPersona || 'N/A' }}
-                      </p>
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-xs font-bold text-emerald-900 truncate">{{ personaInfo?.persona?.Nombre || 'Sin nombre' }}</h4>
+                      <p class="text-[10px] text-emerald-700">Cédula: {{ personaInfo?.persona?.documento || cedula }}</p>
+                      <p class="text-[10px] text-emerald-700">Tipo: {{ personaInfo?.persona?.TipoPersona || 'N/A' }}</p>
                     </div>
                   </div>
                 </div>
-                <div class="space-y-2">
-                  <h5 class="text-sm font-semibold text-gray-700">Equipos Asociados:</h5>
-                  <div v-if="personaInfo?.tiene_portatil" class="rounded-lg bg-blue-50 border border-blue-200 p-3">
-                    <div class="flex items-center space-x-3">
-                      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white flex-shrink-0">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                      </div>
-                      <div class="flex-1">
-                        <p class="text-sm font-semibold text-blue-900">
-                          {{ personaInfo?.portatil_asociado?.marca || '' }} {{ personaInfo?.portatil_asociado?.modelo || '' }}
-                        </p>
-                        <p class="text-xs text-blue-700">
-                          Serial: <span class="font-mono">{{ personaInfo?.portatil_asociado?.serial || 'N/A' }}</span>
-                        </p>
-                      </div>
-                      <svg v-if="personaInfo?.es_entrada" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                <div v-if="personaInfo?.tiene_portatil" class="rounded-lg bg-blue-50 border border-blue-200 p-2">
+                  <div class="flex items-center space-x-2">
+                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white flex-shrink-0">
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                       </svg>
                     </div>
-                    <!-- Botones de verificación (solo en SALIDA) -->
-                    <div v-if="personaInfo?.es_salida && !verificandoEquipo" class="mt-3 flex space-x-2">
-                      <button
-                        type="button"
-                        @click="iniciarVerificacion('portatil')"
-                        class="flex-1 flex items-center justify-center space-x-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition-all hover:bg-blue-700 active:scale-95"
-                      >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Verificar</span>
-                      </button>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-[10px] font-semibold text-blue-900 truncate">
+                        {{ personaInfo?.portatil_asociado?.marca || '' }} {{ personaInfo?.portatil_asociado?.modelo || '' }}
+                      </p>
+                      <p class="text-[10px] text-blue-700">
+                        Serial: {{ personaInfo?.portatil_asociado?.serial || 'N/A' }}
+                      </p>
                     </div>
                   </div>
-                  <div v-if="!personaInfo?.tiene_portatil" class="rounded-lg bg-gray-50 border border-gray-200 p-3 text-center">
-                    <p class="text-sm text-gray-600">Sin portátil asociado</p>
+                  <div v-if="personaInfo?.es_salida && !verificandoEquipo" class="mt-1.5">
+                    <button
+                      type="button"
+                      @click="iniciarVerificacion('portatil')"
+                      class="w-full rounded bg-blue-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-blue-700"
+                    >
+                      Verificar
+                    </button>
                   </div>
                 </div>
-                <div class="rounded-lg border-2 p-3" :class="{
+                <div v-if="!personaInfo?.tiene_portatil" class="rounded-lg bg-gray-50 border border-gray-200 p-2 text-center">
+                  <p class="text-[10px] text-gray-600">Sin portátil</p>
+                </div>
+                <div class="rounded-lg border p-1.5" :class="{
                   'bg-green-50 border-green-300': personaInfo?.es_entrada,
                   'bg-yellow-50 border-yellow-300': personaInfo?.es_salida
                 }">
-                  <div class="flex items-center space-x-2">
-                    <svg v-if="personaInfo?.es_entrada" class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                    <svg v-else class="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="text-sm font-bold" :class="{
-                      'text-green-800': personaInfo?.es_entrada,
-                      'text-yellow-800': personaInfo?.es_salida
-                    }">
-                      {{ personaInfo?.mensaje_accion || 'Acceso' }}
-                    </span>
-                  </div>
+                  <p class="text-[10px] font-bold text-center" :class="{
+                    'text-green-800': personaInfo?.es_entrada,
+                    'text-yellow-800': personaInfo?.es_salida
+                  }">
+                    {{ personaInfo?.mensaje_accion || 'Acceso' }}
+                  </p>
                 </div>
                 <!-- Botones de acción -->
-                <div class="flex space-x-3 pt-2">
+                <div class="flex space-x-2 pt-1">
                   <button
                     type="button"
                     @click="resetSearch"
                     :disabled="confirming || verificandoEquipo"
-                    class="flex-1 rounded-lg border-2 border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-50"
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                   >
-                    <span class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                      </svg>
-                      <span>Nueva Búsqueda</span>
-                    </span>
+                    Nuevo
                   </button>
-                  <!-- Botón dinámico según tipo de acceso -->
                   <button
                     v-if="personaInfo?.es_entrada"
                     type="button"
                     @click="confirmAcceso(false)"
                     :disabled="confirming || verificandoEquipo"
-                    class="flex-1 rounded-lg bg-emerald-600 px-4 py-3 font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
                   >
-                    <span v-if="confirming" class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>Registrando...</span>
-                    </span>
-                    <span v-else class="flex items-center justify-center space-x-2">
-                      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                      </svg>
-                      <span>Confirmar Acceso</span>
-                    </span>
+                    {{ confirming ? 'Registrando...' : 'Confirmar' }}
                   </button>
-                  <!-- Botón "Confiar" para SALIDA (skip verificación) -->
                   <button
                     v-else-if="personaInfo?.es_salida"
                     type="button"
                     @click="confiarSinVerificar"
                     :disabled="confirming || verificandoEquipo"
-                    class="flex-1 rounded-lg bg-yellow-600 px-4 py-3 font-bold text-white transition-all hover:bg-yellow-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex-1 rounded-lg bg-yellow-600 px-3 py-2 text-xs font-bold text-white hover:bg-yellow-700 disabled:opacity-50"
                   >
-                    <span v-if="confirming" class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <span>Registrando...</span>
-                    </span>
-                    <span v-else class="flex items-center justify-center space-x-2">
-                      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                      </svg>
-                      <span>Confiar y Registrar</span>
-                    </span>
+                    {{ confirming ? 'Registrando...' : 'Confiar y Registrar' }}
                   </button>
                 </div>
               </div>

@@ -541,7 +541,7 @@
                 width: 100%;
                 padding: 12px;
                 margin-bottom: 8px;
-                background: linear-gradient(135deg, #50E5F9, #00B4D8);
+                background: linear-gradient(135deg, #39A900, #FDC300);
                 color: white;
                 border: none;
                 border-radius: 10px;

@@ -13,7 +13,7 @@
   --color-sena-green-dark: #2d8700;
   --color-sena-green-darker: #216500;
   --color-sena-green-light: #4ade80;
-  --color-sena-cyan: #50E5F9;
+  /* Cian eliminado del proyecto */
   --color-sena-yellow: #FDC300;
   --color-sena-blue: #00304D;
   --color-sena-blue-light: #1e5a8e;
@@ -100,9 +100,9 @@
   --border-focus: #50a8e8;         /* Cyan corporativo para focus */
   
   /* Colores de estado - Modo oscuro (tonos brillantes con base azulada) */
-  --color-success: #50E5F9;        /* Cyan SENA brillante */
-  --color-success-bg: #0a2e3a;     /* Azul-verde oscuro fondo */
-  --color-success-border: #1e5a8e; /* Azul corporativo medio borde */
+  --color-success: #39A900;        /* Verde SENA */
+  --color-success-bg: #0a2e1a;     /* Verde oscuro fondo */
+  --color-success-border: #2d8700; /* Verde corporativo medio borde */
   
   --color-error: #ef4444;          /* Rojo brillante */
   --color-error-bg: #3d1a1a;       /* Rojo oscuro azulado fondo */
@@ -325,7 +325,7 @@
 }
 
 .dark .hover-accent-corporate:hover {
-  color: #50E5F9;
+  color: #39A900;
 }
 
 /* Efectos de glow corporativo - REMOVIDOS PARA ESTILO MATE */
@@ -335,4 +335,13 @@
 
 .dark .glow-corporate {
   box-shadow: none;
+}
+
+/* ============================================
+   🎯 CLASES PERSONALIZADAS SIDEBAR
+   ============================================ */
+
+/* Border left personalizado para items activos */
+.border-l-3 {
+  border-left-width: 3px;
 }

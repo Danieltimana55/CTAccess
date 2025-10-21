@@ -22,18 +22,7 @@ export default {
           800: '#155100',
           900: '#0a3d00',
         },
-        'sena-cyan': {
-          50: '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          300: '#67e8f9',
-          400: '#50E5F9', // Cyan SENA
-          500: '#06b6d4',
-          600: '#0891b2',
-          700: '#0e7490',
-          800: '#155e75',
-          900: '#164e63',
-        },
+        // sena-cyan eliminado del proyecto
         'sena-yellow': {
           50: '#fefce8',
           100: '#fef9c3',

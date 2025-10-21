@@ -19,7 +19,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #39A900 0%, #50E5F9 100%);
+            background: linear-gradient(135deg, #39A900 0%, #FDC300 100%);
             padding: 20px;
             color: white;
             margin-bottom: 20px;
@@ -40,7 +40,7 @@
         .info-section {
             background: #f8fafc;
             padding: 15px;
-            border-left: 4px solid #50E5F9;
+            border-left: 4px solid #39A900;
             margin-bottom: 20px;
             border-radius: 4px;
         }
@@ -115,7 +115,7 @@
         }
         
         .stat-value.secondary {
-            color: #50E5F9;
+            color: #FDC300;
         }
         
         .stat-value.tertiary {

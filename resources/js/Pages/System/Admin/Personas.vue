@@ -16,6 +16,10 @@ const loading = ref(false)
 const searchForm = reactive({
   search: '',
   per_page: 15,
+  tipo_persona: '',
+  tiene_portatiles: '',
+  tiene_vehiculos: '',
+  orden: 'nombre_asc',
 })
 
 // Form
@@ -33,6 +37,35 @@ const tiposPersona = [
   { value: 'Contratista', label: 'Contratista' },
   { value: 'Visitante', label: 'Visitante' },
 ]
+
+const opcionesOrden = [
+  { value: 'nombre_asc', label: 'Nombre (A-Z)' },
+  { value: 'nombre_desc', label: 'Nombre (Z-A)' },
+  { value: 'documento_asc', label: 'Documento (0-9)' },
+  { value: 'documento_desc', label: 'Documento (9-0)' },
+  { value: 'reciente', label: 'Más recientes' },
+  { value: 'antiguo', label: 'Más antiguos' },
+]
+
+// Computed para verificar si hay filtros activos
+const hasActiveFilters = computed(() => {
+  return searchForm.search || 
+         searchForm.tipo_persona || 
+         searchForm.tiene_portatiles || 
+         searchForm.tiene_vehiculos ||
+         searchForm.orden !== 'nombre_asc'
+})
+
+// Contador de filtros activos
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (searchForm.search) count++
+  if (searchForm.tipo_persona) count++
+  if (searchForm.tiene_portatiles) count++
+  if (searchForm.tiene_vehiculos) count++
+  if (searchForm.orden !== 'nombre_asc') count++
+  return count
+})
 
 // Debounce function
 const debounce = (func, wait) => {
@@ -66,6 +99,16 @@ const loadPersonas = async () => {
 const search = debounce(() => {
   loadPersonas()
 }, 300)
+
+// Clear all filters
+const clearFilters = () => {
+  searchForm.search = ''
+  searchForm.tipo_persona = ''
+  searchForm.tiene_portatiles = ''
+  searchForm.tiene_vehiculos = ''
+  searchForm.orden = 'nombre_asc'
+  loadPersonas()
+}
 
 // Open create modal
 const openCreateModal = () => {
@@ -177,29 +220,161 @@ onMounted(() => {
     </template>
 
     <div class="space-y-3 sm:space-y-4">
-      <!-- Filtros Compactos -->
-      <div class="bg-theme-card rounded-lg border border-theme-primary p-3 shadow-theme-sm">
-        <div class="flex flex-col sm:flex-row gap-2">
-          <div class="flex-1">
+      <!-- Filtros Avanzados -->
+      <div class="bg-theme-card rounded-lg border border-theme-primary p-3 sm:p-4 shadow-theme-sm">
+        <!-- Header de filtros -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <Icon name="filter" class="w-4 h-4 text-theme-secondary" />
+            <h3 class="text-sm font-semibold text-theme-primary">Filtros</h3>
+            <span v-if="activeFiltersCount > 0" class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-sena-green-600 dark:bg-cyan-600 text-white text-xs font-bold">
+              {{ activeFiltersCount }}
+            </span>
+          </div>
+          <button
+            v-if="hasActiveFilters"
+            @click="clearFilters"
+            class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+          >
+            <Icon name="x-circle" class="w-3.5 h-3.5" />
+            Limpiar
+          </button>
+        </div>
+
+        <!-- Fila 1: Búsqueda y Tipo -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
+          <!-- Búsqueda general -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="search" class="w-3 h-3 inline mr-1" />
+              Buscar
+            </label>
             <input
               v-model="searchForm.search"
               @input="search"
               type="search"
               inputmode="search"
-              placeholder="Buscar por nombre, documento..."
+              placeholder="Nombre, documento..."
               class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary placeholder-theme-muted focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 focus:border-transparent touch-manipulation"
             >
           </div>
-          <select
-            v-model="searchForm.per_page"
-            @change="search"
-            class="px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 w-full sm:w-32 touch-manipulation"
-          >
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
+
+          <!-- Tipo de persona -->
+          <div>
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="users" class="w-3 h-3 inline mr-1" />
+              Tipo
+            </label>
+            <select
+              v-model="searchForm.tipo_persona"
+              @change="search"
+              class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 touch-manipulation"
+            >
+              <option value="">Todos los tipos</option>
+              <option v-for="tipo in tiposPersona" :key="tipo.value" :value="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Fila 2: Filtros de recursos y ordenamiento -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <!-- Tiene portátiles -->
+          <div>
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="laptop" class="w-3 h-3 inline mr-1" />
+              Portátiles
+            </label>
+            <select
+              v-model="searchForm.tiene_portatiles"
+              @change="search"
+              class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 touch-manipulation"
+            >
+              <option value="">Todos</option>
+              <option value="si">Con portátiles</option>
+              <option value="no">Sin portátiles</option>
+            </select>
+          </div>
+
+          <!-- Tiene vehículos -->
+          <div>
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="car" class="w-3 h-3 inline mr-1" />
+              Vehículos
+            </label>
+            <select
+              v-model="searchForm.tiene_vehiculos"
+              @change="search"
+              class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 touch-manipulation"
+            >
+              <option value="">Todos</option>
+              <option value="si">Con vehículos</option>
+              <option value="no">Sin vehículos</option>
+            </select>
+          </div>
+
+          <!-- Ordenamiento -->
+          <div>
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="arrow-up-down" class="w-3 h-3 inline mr-1" />
+              Ordenar
+            </label>
+            <select
+              v-model="searchForm.orden"
+              @change="search"
+              class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 touch-manipulation"
+            >
+              <option v-for="orden in opcionesOrden" :key="orden.value" :value="orden.value">
+                {{ orden.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Por página -->
+          <div>
+            <label class="block text-xs font-medium text-theme-secondary mb-1">
+              <Icon name="list" class="w-3 h-3 inline mr-1" />
+              Mostrar
+            </label>
+            <select
+              v-model="searchForm.per_page"
+              @change="search"
+              class="w-full px-3 py-2 text-sm border border-theme-primary rounded-lg bg-theme-card text-theme-primary focus:ring-2 focus:ring-sena-green-500 dark:focus:ring-cyan-500 touch-manipulation"
+            >
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Indicadores de filtros activos -->
+        <div v-if="hasActiveFilters" class="mt-3 pt-3 border-t border-theme-primary">
+          <div class="flex flex-wrap gap-1.5">
+            <span v-if="searchForm.search" class="inline-flex items-center gap-1 px-2 py-1 bg-sena-green-100 dark:bg-sena-green-900/30 text-sena-green-700 dark:text-sena-green-300 rounded-md text-xs">
+              <Icon name="search" class="w-3 h-3" />
+              {{ searchForm.search }}
+            </span>
+            <span v-if="searchForm.tipo_persona" class="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs">
+              <Icon name="users" class="w-3 h-3" />
+              {{ searchForm.tipo_persona }}
+            </span>
+            <span v-if="searchForm.tiene_portatiles" class="inline-flex items-center gap-1 px-2 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded-md text-xs">
+              <Icon name="laptop" class="w-3 h-3" />
+              {{ searchForm.tiene_portatiles === 'si' ? 'Con portátiles' : 'Sin portátiles' }}
+            </span>
+            <span v-if="searchForm.tiene_vehiculos" class="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-md text-xs">
+              <Icon name="car" class="w-3 h-3" />
+              {{ searchForm.tiene_vehiculos === 'si' ? 'Con vehículos' : 'Sin vehículos' }}
+            </span>
+            <span v-if="searchForm.orden !== 'nombre_asc'" class="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs">
+              <Icon name="arrow-up-down" class="w-3 h-3" />
+              {{ opcionesOrden.find(o => o.value === searchForm.orden)?.label }}
+            </span>
+          </div>
         </div>
       </div>
 

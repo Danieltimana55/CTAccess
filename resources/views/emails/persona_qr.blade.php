@@ -43,7 +43,7 @@
             <div class="qr-title">QR de tus Portátiles</div>
             <p>Se han registrado {{ $portatiles->count() }} portátil(es):</p>
             @foreach($portatiles as $index => $portatil)
-                <div style="margin: 15px 0; padding: 10px; background-color: #fff; border-left: 3px solid #50E5F9;">
+                <div style="margin: 15px 0; padding: 10px; background-color: #fff; border-left: 3px solid #FDC300;">
                     <p style="margin: 5px 0;">
                         <strong>Portátil {{ $index + 1 }}:</strong><br>
                         <strong>Serial:</strong> {{ $portatil->serial }}<br>
@@ -56,7 +56,7 @@
                     </p>
                     @if($portatil->qrCode)
                         <p>
-                            <img src="{{ $portatil->qrCode }}" alt="QR Portátil {{ $index + 1 }}" style="width:180px;height:180px; border: 2px solid #50E5F9; border-radius: 8px;" />
+                            <img src="{{ $portatil->qrCode }}" alt="QR Portátil {{ $index + 1 }}" style="width:180px;height:180px; border: 2px solid #FDC300; border-radius: 8px;" />
                         </p>
                     @endif
                 </div>

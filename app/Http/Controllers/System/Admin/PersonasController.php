@@ -22,6 +22,100 @@ class PersonasController extends Controller
         $this->middleware(['auth:system', 'check.system.role:administrador']);
     }
 
+    public function index()
+    {
+        return Inertia::render('System/Admin/Personas');
+    }
+
+    public function data(Request $request)
+    {
+        $query = Persona::with(['portatiles', 'vehiculos']);
+
+        // Filtro de búsqueda general
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('Nombre', 'like', "%{$search}%")
+                    ->orWhere('documento', 'like', "%{$search}%")
+                    ->orWhere('correo', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtro por tipo de persona
+        if ($request->filled('tipo_persona')) {
+            $query->where('TipoPersona', $request->tipo_persona);
+        }
+
+        // Filtro por portátiles
+        if ($request->filled('tiene_portatiles')) {
+            if ($request->tiene_portatiles === 'si') {
+                $query->has('portatiles');
+            } elseif ($request->tiene_portatiles === 'no') {
+                $query->doesntHave('portatiles');
+            }
+        }
+
+        // Filtro por vehículos
+        if ($request->filled('tiene_vehiculos')) {
+            if ($request->tiene_vehiculos === 'si') {
+                $query->has('vehiculos');
+            } elseif ($request->tiene_vehiculos === 'no') {
+                $query->doesntHave('vehiculos');
+            }
+        }
+
+        // Ordenamiento
+        $orden = $request->orden ?? 'nombre_asc';
+        switch ($orden) {
+            case 'nombre_desc':
+                $query->orderBy('Nombre', 'desc');
+                break;
+            case 'documento_asc':
+                $query->orderBy('documento', 'asc');
+                break;
+            case 'documento_desc':
+                $query->orderBy('documento', 'desc');
+                break;
+            case 'reciente':
+                $query->orderBy('idPersona', 'desc');
+                break;
+            case 'antiguo':
+                $query->orderBy('idPersona', 'asc');
+                break;
+            default: // nombre_asc
+                $query->orderBy('Nombre', 'asc');
+                break;
+        }
+
+        $perPage = $request->per_page ?? 15;
+        $personas = $query->paginate($perPage)->through(function ($persona) {
+            return [
+                'id' => $persona->idPersona,
+                'nombre' => $persona->Nombre,
+                'documento' => $persona->documento,
+                'tipoPersona' => $persona->TipoPersona,
+                'correo' => $persona->correo,
+                'qrCode' => $persona->qrCode,
+                'portatiles' => $persona->portatiles->map(fn($p) => [
+                    'id' => $p->idPortatil,
+                    'marca' => $p->Marca,
+                    'modelo' => $p->Modelo,
+                    'serial' => $p->Serial,
+                ]),
+                'vehiculos' => $persona->vehiculos->map(fn($v) => [
+                    'id' => $v->idVehiculo,
+                    'placa' => $v->Placa,
+                    'marca' => $v->Marca,
+                    'modelo' => $v->Modelo,
+                ]),
+            ];
+        });
+
+        return response()->json([
+            'personas' => $personas
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

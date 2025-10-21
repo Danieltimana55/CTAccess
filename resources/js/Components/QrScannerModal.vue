@@ -16,24 +16,14 @@
             @click.stop
           >
             <!-- Header -->
-            <div class="bg-blue-600 px-6 py-5">
+            <div class="bg-blue-600 px-4 py-3">
               <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-bold text-white">Escanear QR</h3>
-                    <p class="text-xs text-blue-50">Apunta la cámara al código QR</p>
-                  </div>
-                </div>
+                <h3 class="text-sm font-bold text-white">Escanear Código QR</h3>
                 <button
                   @click="handleClose"
-                  class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white transition-all hover:bg-white/30 active:scale-95"
+                  class="flex h-6 w-6 items-center justify-center rounded text-white/80 hover:text-white hover:bg-white/20 transition-colors"
                 >
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
@@ -41,7 +31,7 @@
             </div>
 
             <!-- Body -->
-            <div class="p-6">
+            <div class="p-4">
               <!-- Video Preview -->
               <div class="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-900">
                 <video
@@ -53,15 +43,12 @@
                 
                 <!-- Overlay de escaneo -->
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="relative h-64 w-64">
+                  <div class="relative h-48 w-48">
                     <!-- Esquinas del marco -->
-                    <div class="absolute left-0 top-0 h-16 w-16 border-l-4 border-t-4 border-blue-500"></div>
-                    <div class="absolute right-0 top-0 h-16 w-16 border-r-4 border-t-4 border-blue-500"></div>
-                    <div class="absolute bottom-0 left-0 h-16 w-16 border-b-4 border-l-4 border-blue-500"></div>
-                    <div class="absolute bottom-0 right-0 h-16 w-16 border-b-4 border-r-4 border-blue-500"></div>
-                    
-                    <!-- Línea de escaneo animada -->
-                    <div class="scan-line absolute left-0 right-0 top-0 h-1 bg-blue-500"></div>
+                    <div class="absolute left-0 top-0 h-12 w-12 border-l-4 border-t-4 border-white"></div>
+                    <div class="absolute right-0 top-0 h-12 w-12 border-r-4 border-t-4 border-white"></div>
+                    <div class="absolute bottom-0 left-0 h-12 w-12 border-b-4 border-l-4 border-white"></div>
+                    <div class="absolute bottom-0 right-0 h-12 w-12 border-b-4 border-r-4 border-white"></div>
                   </div>
                 </div>
 
@@ -70,13 +57,7 @@
                   v-if="loading"
                   class="absolute inset-0 flex items-center justify-center bg-gray-900/80"
                 >
-                  <div class="text-center">
-                    <svg class="mx-auto h-12 w-12 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="mt-3 text-sm font-medium text-white">Iniciando cámara...</p>
-                  </div>
+                  <p class="text-xs font-medium text-white">Iniciando cámara...</p>
                 </div>
 
                 <!-- Mensaje de éxito -->
@@ -85,14 +66,7 @@
                     v-if="successMessage"
                     class="absolute inset-0 flex items-center justify-center bg-emerald-600/95"
                   >
-                    <div class="text-center px-4">
-                      <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white">
-                        <svg class="h-10 w-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                      </div>
-                      <p class="text-lg font-bold text-white">{{ successMessage }}</p>
-                    </div>
+                    <p class="text-sm font-bold text-white px-4 text-center">{{ successMessage }}</p>
                   </div>
                 </Transition>
               </div>
@@ -101,154 +75,97 @@
               <canvas ref="canvasElement" class="hidden"></canvas>
 
               <!-- Info y controles -->
-              <div class="mt-4 space-y-3">
+              <div class="mt-2 space-y-2">
                 <!-- Información de la Persona (cuando se detecta) -->
-                <div v-if="personaInfo && !error" class="space-y-3">
+                <div v-if="personaInfo && !error" class="space-y-2">
                   <!-- Datos de la persona -->
-                  <div class="rounded-lg bg-emerald-50 border-2 border-emerald-200 p-3">
+                  <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-2">
                     <div class="flex items-start space-x-2">
-                      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white flex-shrink-0">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white flex-shrink-0">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                       </div>
-                      <div class="flex-1">
-                        <h4 class="text-sm font-bold text-emerald-900">{{ personaInfo.persona?.Nombre }}</h4>
-                        <p class="text-xs text-emerald-700">
-                          <span class="font-medium">Cédula:</span> {{ personaInfo.persona?.documento }}
-                        </p>
-                        <p class="text-xs text-emerald-700">
-                          <span class="font-medium">Tipo:</span> {{ personaInfo.persona?.TipoPersona }}
-                        </p>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-emerald-900 truncate">{{ personaInfo.persona?.Nombre }}</h4>
+                        <p class="text-[10px] text-emerald-700">Cédula: {{ personaInfo.persona?.documento }}</p>
+                        <p class="text-[10px] text-emerald-700">Tipo: {{ personaInfo.persona?.TipoPersona }}</p>
                       </div>
                     </div>
                   </div>
 
                   <!-- Equipos -->
-                  <div class="space-y-2">
-                    <div v-if="personaInfo.tiene_portatil" class="flex items-center space-x-2 rounded-lg bg-blue-50 border border-blue-200 p-2">
-                      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white flex-shrink-0">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-xs font-semibold text-blue-900 truncate">
-                          {{ personaInfo.portatil_asociado?.marca }} {{ personaInfo.portatil_asociado?.modelo }}
-                        </p>
-                        <p class="text-xs text-blue-700">Serial: {{ personaInfo.portatil_asociado?.serial }}</p>
-                      </div>
-                      <svg class="h-4 w-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  <div v-if="personaInfo.tiene_portatil" class="flex items-center space-x-2 rounded-lg bg-blue-50 border border-blue-200 p-2">
+                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white flex-shrink-0">
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                       </svg>
                     </div>
-
+                    <div class="flex-1 min-w-0">
+                      <p class="text-[10px] font-semibold text-blue-900 truncate">
+                        {{ personaInfo.portatil_asociado?.marca }} {{ personaInfo.portatil_asociado?.modelo }}
+                      </p>
+                      <p class="text-[10px] text-blue-700">Serial: {{ personaInfo.portatil_asociado?.serial }}</p>
+                    </div>
                   </div>
 
                   <!-- Tipo de acceso -->
-                  <div class="rounded-lg border-2 p-2" :class="{
+                  <div class="rounded-lg border p-1.5" :class="{
                     'bg-green-50 border-green-300': personaInfo.es_entrada,
                     'bg-yellow-50 border-yellow-300': personaInfo.es_salida
                   }">
-                    <div class="flex items-center space-x-2">
-                      <svg v-if="personaInfo.es_entrada" class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path>
-                      </svg>
-                      <svg v-else class="h-4 w-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
-                      </svg>
-                      <span class="text-xs font-bold" :class="{
-                        'text-green-800': personaInfo.es_entrada,
-                        'text-yellow-800': personaInfo.es_salida
-                      }">
-                        {{ personaInfo.mensaje_accion }}
-                      </span>
-                    </div>
+                    <p class="text-[10px] font-bold text-center" :class="{
+                      'text-green-800': personaInfo.es_entrada,
+                      'text-yellow-800': personaInfo.es_salida
+                    }">
+                      {{ personaInfo.mensaje_accion }}
+                    </p>
                   </div>
 
                   <!-- Botones de acción -->
-                  <div class="flex space-x-2 pt-1">
+                  <div class="flex space-x-2">
                     <button
                       type="button"
                       @click="resetScan"
                       :disabled="confirming"
-                      class="flex-1 rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-50"
+                      class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                     >
-                      <span class="flex items-center justify-center space-x-1">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        <span>Nuevo</span>
-                      </span>
+                      Nuevo
                     </button>
                     <button
                       type="button"
                       @click="confirmAcceso"
                       :disabled="confirming"
-                      class="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white transition-all hover:bg-emerald-700 active:scale-95 disabled:opacity-50"
+                      class="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
                     >
-                      <span v-if="confirming" class="flex items-center justify-center space-x-1">
-                        <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Registrando...</span>
-                      </span>
-                      <span v-else class="flex items-center justify-center space-x-1">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Confirmar</span>
-                      </span>
+                      {{ confirming ? 'Registrando...' : 'Confirmar' }}
                     </button>
                   </div>
                 </div>
 
                 <!-- Estado: Buscando -->
-                <div v-else-if="searching" class="rounded-lg bg-blue-50 border-2 border-blue-200 p-4">
-                  <div class="flex items-center justify-center space-x-2">
-                    <svg class="h-5 w-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="text-sm font-medium text-blue-900">Buscando persona...</p>
-                  </div>
+                <div v-else-if="searching" class="rounded-lg bg-blue-50 border border-blue-200 p-2">
+                  <p class="text-xs text-center font-medium text-blue-900">Buscando persona...</p>
                 </div>
 
                 <!-- Error -->
-                <div v-else-if="error" class="rounded-lg bg-red-50 border-2 border-red-200 p-3">
-                  <div class="flex items-start space-x-2">
-                    <svg class="h-5 w-5 mt-0.5 flex-shrink-0 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                    <div class="flex-1">
-                      <p class="text-sm font-medium text-red-900">Error</p>
-                      <p class="text-xs text-red-700">{{ error }}</p>
-                    </div>
-                  </div>
+                <div v-else-if="error" class="rounded-lg bg-red-50 border border-red-200 p-2">
+                  <p class="text-xs text-red-900 font-medium">{{ error }}</p>
                 </div>
 
                 <!-- Instrucciones (cuando no hay escaneo) -->
-                <div v-else class="rounded-lg bg-gray-50 p-3">
-                  <div class="flex items-start space-x-2">
-                    <svg class="h-5 w-5 mt-0.5 flex-shrink-0 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                    </svg>
-                    <div class="flex-1">
-                      <p class="text-xs font-medium text-gray-900">Instrucciones</p>
-                      <p class="text-xs text-gray-600 mt-1">
-                        Centra el código QR o código de barras con la cédula dentro del marco. El escaneo es automático.
-                      </p>
-                    </div>
-                  </div>
+                <div v-else class="rounded-lg bg-gray-50 p-2">
+                  <p class="text-[10px] text-center text-gray-600">
+                    Centra el código QR dentro del marco. El escaneo es automático.
+                  </p>
                 </div>
 
                 <!-- Botón cerrar/activar cámara (cuando no hay persona detectada) -->
-                <div v-if="!personaInfo" class="flex space-x-3">
+                <div v-if="!personaInfo" class="flex space-x-2">
                   <button
                     type="button"
                     @click="handleClose"
-                    class="flex-1 rounded-lg border-2 border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-95"
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
                   >
                     Cerrar
                   </button>
@@ -256,15 +173,9 @@
                     v-if="!cameraActive"
                     @click="startCamera"
                     :disabled="loading"
-                    class="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 font-bold text-white shadow-lg transition-all hover:shadow-xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-50"
                   >
-                    <span class="flex items-center justify-center space-x-2">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      </svg>
-                      <span>Activar Cámara</span>
-                    </span>
+                    Activar Cámara
                   </button>
                 </div>
               </div>
