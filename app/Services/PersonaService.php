@@ -10,11 +10,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Jobs\GenerateQrCodeJob;
 
 class PersonaService
 {
     /**
-     * Descargar imagen PNG de un QR externo y almacenarla en storage/public/qrcodes.
+     * 🚀 OPTIMIZADO: Solo genera la ruta del QR sin crear el archivo.
+     * El archivo se creará en segundo plano mediante un Job.
+     * Retorna: ['url' => '/storage/qrcodes/...', 'path' => 'qrcodes/...']
+     */
+    protected function generateQrPath(string $content, string $prefix = 'qr'): array
+    {
+        $filename = sprintf('%s_%s_%s.png', $prefix, Str::slug($content), Str::random(8));
+        $path = 'qrcodes/' . $filename; // Ruta relativa dentro del disco public
+        $url = Storage::url($path); // URL pública /storage/qrcodes/...
+        
+        return [
+            'url' => $url,
+            'path' => $path
+        ];
+    }
+
+    /**
+     * 🔧 LEGACY: Descargar imagen PNG de un QR externo (solo para actualizaciones).
      * Retorna la URL pública /storage/qrcodes/....png
      */
     protected function storeQrPng(string $content, string $prefix = 'qr'): string
@@ -34,43 +52,76 @@ class PersonaService
     public function createWithRelations(array $data): Persona
     {
         return DB::transaction(function () use ($data) {
-            // Generar QR para la persona a partir del documento (si viene)
+            // 🚀 OPTIMIZADO: Generar solo la RUTA del QR para la persona (sin descargar aún)
             $personaQrPath = null;
+            $personaQrFilePath = null;
+            $personaQrContent = null;
+            
             if (!empty($data['documento'])) {
                 // Formato correcto para el sistema QR: PERSONA_documento
-                $qrContent = 'PERSONA_' . $data['documento'];
-                $personaQrPath = $this->storeQrPng($qrContent, 'persona');
+                $personaQrContent = 'PERSONA_' . $data['documento'];
+                $qrInfo = $this->generateQrPath($personaQrContent, 'persona');
+                $personaQrPath = $qrInfo['url']; // /storage/qrcodes/persona_xxx.png
+                $personaQrFilePath = $qrInfo['path']; // qrcodes/persona_xxx.png
             }
 
+            // Crear persona con la ruta del QR (aunque el archivo físico no exista aún)
             $persona = Persona::create([
                 'documento' => $data['documento'] ?? null,
                 'Nombre' => $data['nombre'],
                 'TipoPersona' => $data['tipoPersona'],
-                // Guardamos la RUTA de la imagen QR en el campo qrCode
-                'qrCode' => $personaQrPath,
+                'qrCode' => $personaQrPath, // Guardamos la ruta
                 'correo' => $data['correo'] ?? null,
+                'jornada_id' => $data['jornada_id'] ?? null,
+                'programa_formacion_id' => $data['programa_formacion_id'] ?? null,
             ]);
 
+            // 🔥 Despachar Job para generar el QR en segundo plano
+            if ($personaQrFilePath && $personaQrContent) {
+                GenerateQrCodeJob::dispatch(
+                    'persona',
+                    $persona->idPersona,
+                    $personaQrContent,
+                    $personaQrFilePath
+                );
+            }
+
+            // Crear portátiles con QR en segundo plano
             if (!empty($data['portatiles']) && is_array($data['portatiles'])) {
                 foreach ($data['portatiles'] as $p) {
-                    // Generar QR para el portátil usando su serial
                     $serial = $p['serial'] ?? '';
                     $qrPath = null;
+                    $qrFilePath = null;
+                    $qrContent = null;
+                    
                     if ($serial) {
                         // Formato correcto para el sistema QR: PORTATIL_serial
                         $qrContent = 'PORTATIL_' . $serial;
-                        $qrPath = $this->storeQrPng($qrContent, 'portatil');
+                        $qrInfo = $this->generateQrPath($qrContent, 'portatil');
+                        $qrPath = $qrInfo['url'];
+                        $qrFilePath = $qrInfo['path'];
                     }
-                    $persona->portatiles()->create([
-                        // Guardamos la RUTA de la imagen QR del portátil
-                        'qrCode' => $qrPath,
+                    
+                    $portatil = $persona->portatiles()->create([
+                        'qrCode' => $qrPath, // Guardamos la ruta
                         'serial' => $serial,
                         'marca' => $p['marca'],
                         'modelo' => $p['modelo'],
                     ]);
+
+                    // 🔥 Despachar Job para generar el QR del portátil en segundo plano
+                    if ($qrFilePath && $qrContent) {
+                        GenerateQrCodeJob::dispatch(
+                            'portatil',
+                            $portatil->portatil_id,
+                            $qrContent,
+                            $qrFilePath
+                        );
+                    }
                 }
             }
 
+            // Crear vehículos (sin QR)
             if (!empty($data['vehiculos']) && is_array($data['vehiculos'])) {
                 foreach ($data['vehiculos'] as $v) {
                     $persona->vehiculos()->create([
@@ -96,6 +147,8 @@ class PersonaService
                     ? $this->storeQrPng($data['documento'], 'persona')
                     : $persona->qrCode,
                 'correo' => $data['correo'] ?? $persona->correo,
+                'jornada_id' => $data['jornada_id'] ?? $persona->jornada_id,
+                'programa_formacion_id' => $data['programa_formacion_id'] ?? $persona->programa_formacion_id,
             ]);
 
             if (array_key_exists('portatiles', $data) && is_array($data['portatiles'])) {

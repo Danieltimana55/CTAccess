@@ -94,15 +94,20 @@ class PersonaController extends Controller
                 ]);
             }
 
-            // Enviar email con el QR adjunto si hay correo (no bloquear en caso de error)
+            // 🔥 Enviar email con el QR en segundo plano (espera a que se genere el QR)
             if (!empty($persona->correo)) {
                 try {
-                    // Recargar persona con portátiles para el email
-                    $persona->load('portatiles');
-                    Mail::to($persona->correo)->send(new PersonaQrMailable($persona));
+                    // Despachar job con delay de 10 segundos para dar tiempo a que se genere el QR
+                    \App\Jobs\SendPersonaQrEmailJob::dispatch($persona->idPersona, $persona->correo)
+                        ->delay(now()->addSeconds(10));
+                    
+                    Log::info('Email con QR encolado para envío', [
+                        'persona_id' => $persona->idPersona,
+                        'correo' => $persona->correo,
+                    ]);
                 } catch (\Throwable $mailEx) {
                     // Registrar pero no interrumpir el flujo de creación
-                    Log::error('Error enviando correo de QR a persona', [
+                    Log::error('Error encolando correo de QR a persona', [
                         'persona_id' => $persona->idPersona,
                         'correo' => $persona->correo,
                         'error' => $mailEx->getMessage(),
@@ -110,19 +115,17 @@ class PersonaController extends Controller
                 }
             }
 
-            // Si el usuario está autenticado en el sistema, redirigir a personas.index
-            // Si no (registro público), redirigir al login de personas
-            if (auth('system')->check()) {
-                return redirect()
-                    ->route('personas.index')
-                    ->with('success', 'Persona creada correctamente');
-            } else {
-                return redirect()
-                    ->route('personas.create')
-                    ->with('success', '¡Registro exitoso! Tu código QR ha sido enviado a tu correo.');
-            }
+            // Redirigir de vuelta al formulario con mensaje de éxito
+            return redirect()
+                ->route('personas.create')
+                ->with('success', '¡Registro exitoso! Tu código QR será enviado a tu correo en unos segundos.');
                 
         } catch (\Throwable $e) {
+            Log::error('Error creando persona', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return redirect()
                 ->back()
                 ->withInput()

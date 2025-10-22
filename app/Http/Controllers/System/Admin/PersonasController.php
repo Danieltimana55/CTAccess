@@ -17,11 +17,6 @@ use App\Mail\PersonaQrMailable;
 
 class PersonasController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth:system', 'check.system.role:administrador']);
-    }
-
     public function index()
     {
         return Inertia::render('System/Admin/Personas');

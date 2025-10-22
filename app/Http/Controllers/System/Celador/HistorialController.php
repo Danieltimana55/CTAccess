@@ -19,7 +19,18 @@ class HistorialController extends Controller
     protected function ensureRole(): void
     {
         $user = Auth::guard('system')->user();
-        if (! $user || ! method_exists($user, 'isCelador') || ! $user->isCelador()) {
+        
+        if (! $user) {
+            abort(403, 'No autorizado');
+        }
+
+        // Admin tiene acceso a todo, incluyendo funcionalidades de celador
+        if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+            return;
+        }
+
+        // Si no es admin, debe ser celador
+        if (! method_exists($user, 'isCelador') || ! $user->isCelador()) {
             abort(403, 'No autorizado');
         }
     }

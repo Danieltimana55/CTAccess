@@ -15,11 +15,6 @@ use Inertia\Inertia;
 
 class PapeleraController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth:system', 'check.system.role:administrador']);
-    }
-
     /**
      * Muestra la papelera con todos los registros eliminados
      */

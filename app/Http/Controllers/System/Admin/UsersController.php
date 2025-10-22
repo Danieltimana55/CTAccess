@@ -11,11 +11,6 @@ use Inertia\Inertia;
 
 class UsersController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth:system', 'check.system.role:administrador']);
-    }
-
     public function index(Request $request)
     {
         $search = (string) $request->query('q', '');

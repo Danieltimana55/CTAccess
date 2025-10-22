@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class ActivityLogController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth:system', 'check.system.role:administrador']);
-    }
-
     /**
      * Muestra el índice de logs
      */
