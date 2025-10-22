@@ -1,6 +1,6 @@
 <script setup>
 import SystemLayout from '@/Layouts/System/SystemLayout.vue'
-import { Head, usePage } from '@inertiajs/vue3'
+import { Head, usePage, router } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import KpiCard from '@/Components/Dashboard/KpiCard.vue'
 import DashboardFilters from '@/Components/Dashboard/DashboardFilters.vue'
@@ -41,6 +41,29 @@ const filterOptions = page.props.filterOptions || {}
 const meta = page.props.meta || {}
 
 const activeTab = ref('diario') // diario, semanal, mensual
+
+// ============================================
+// FILTROS RÁPIDOS POR GRÁFICO
+// ============================================
+const quickFilters = ref({
+  accesos: 'todos', // todos, hoy, semana, mes
+  personas: 'todos', // todos, activas, inactivas
+  incidencias: 'todas', // todas, abiertas, cerradas, criticas
+  recursos: 'todos', // todos, disponibles, en_uso
+  programas: 'todos', // todos, vigentes, finalizados
+})
+
+// Aplicar filtro rápido
+const applyQuickFilter = (section, value) => {
+  quickFilters.value[section] = value
+  // Aquí puedes implementar la lógica para filtrar los datos
+  // Por ahora, se puede hacer un refresh con parámetros
+}
+
+// Verificar si un filtro está activo
+const isFilterActive = (section, value) => {
+  return quickFilters.value[section] === value
+}
 
 // ============================================
 // CONFIGURACIONES DE GRÁFICOS
@@ -442,35 +465,75 @@ const formatDuration = (minutes) => {
           Tendencia de Accesos
         </h3>
         <div class="overflow-hidden rounded-lg border border-theme-primary bg-theme-card shadow-theme-sm">
-          <!-- Tabs de período -->
-          <div class="flex border-b border-theme-primary bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30">
-            <button
-              @click="activeTab = 'diario'"
-              class="flex-1 px-4 py-3 text-sm font-medium transition-colors"
-              :class="activeTab === 'diario' 
-                ? 'bg-sena-green-600 text-white shadow-sm' 
-                : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
-            >
-              Diario
-            </button>
-            <button
-              @click="activeTab = 'semanal'"
-              class="flex-1 px-4 py-3 text-sm font-medium transition-colors border-l border-theme-primary"
-              :class="activeTab === 'semanal' 
-                ? 'bg-sena-green-600 text-white shadow-sm' 
-                : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
-            >
-              Semanal
-            </button>
-            <button
-              @click="activeTab = 'mensual'"
-              class="flex-1 px-4 py-3 text-sm font-medium transition-colors border-l border-theme-primary"
-              :class="activeTab === 'mensual' 
-                ? 'bg-sena-green-600 text-white shadow-sm' 
-                : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
-            >
-              Mensual
-            </button>
+          <!-- Tabs de período con filtros rápidos integrados -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-theme-primary bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30 p-2">
+            <!-- Tabs de período -->
+            <div class="flex flex-1 rounded-lg overflow-hidden border border-sena-green-300 dark:border-sena-green-700">
+              <button
+                @click="activeTab = 'diario'"
+                class="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all"
+                :class="activeTab === 'diario' 
+                  ? 'bg-sena-green-600 text-white shadow-sm' 
+                  : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
+              >
+                <Icon name="calendar" :size="14" class="inline mr-1" />
+                Diario
+              </button>
+              <button
+                @click="activeTab = 'semanal'"
+                class="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all border-l border-sena-green-300 dark:border-sena-green-700"
+                :class="activeTab === 'semanal' 
+                  ? 'bg-sena-green-600 text-white shadow-sm' 
+                  : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
+              >
+                <Icon name="calendar" :size="14" class="inline mr-1" />
+                Semanal
+              </button>
+              <button
+                @click="activeTab = 'mensual'"
+                class="flex-1 px-3 py-2 text-xs sm:text-sm font-medium transition-all border-l border-sena-green-300 dark:border-sena-green-700"
+                :class="activeTab === 'mensual' 
+                  ? 'bg-sena-green-600 text-white shadow-sm' 
+                  : 'text-sena-green-700 dark:text-sena-green-300 hover:bg-sena-green-100 dark:hover:bg-sena-green-900/30'"
+              >
+                <Icon name="calendar" :size="14" class="inline mr-1" />
+                Mensual
+              </button>
+            </div>
+
+            <!-- Filtros rápidos de accesos -->
+            <div class="flex gap-1 sm:gap-2 flex-wrap">
+              <button
+                @click="applyQuickFilter('accesos', 'todos')"
+                class="px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-all"
+                :class="isFilterActive('accesos', 'todos')
+                  ? 'bg-blue-500 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+              >
+                <Icon name="grid" :size="12" class="inline mr-1" />
+                Todos
+              </button>
+              <button
+                @click="applyQuickFilter('accesos', 'hoy')"
+                class="px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-all"
+                :class="isFilterActive('accesos', 'hoy')
+                  ? 'bg-green-500 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+              >
+                <Icon name="sun" :size="12" class="inline mr-1" />
+                Hoy
+              </button>
+              <button
+                @click="applyQuickFilter('accesos', 'activos')"
+                class="px-2 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-all"
+                :class="isFilterActive('accesos', 'activos')
+                  ? 'bg-cyan-500 text-white shadow-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+              >
+                <Icon name="zap" :size="12" class="inline mr-1" />
+                Activos
+              </button>
+            </div>
           </div>
           
           <div class="p-4" style="height: 300px;">
@@ -491,13 +554,48 @@ const formatDuration = (minutes) => {
         <div class="grid gap-3 sm:gap-4 lg:grid-cols-2">
           <!-- Top 5 Personas -->
           <div class="overflow-hidden rounded-lg border border-sena-green-300 dark:border-sena-green-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-sena-green-300 dark:border-sena-green-800 bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-sena-green-600 to-sena-green-700 shadow-sm flex-shrink-0">
-                <Icon name="award" :size="20" class="text-white" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-sena-green-300 dark:border-sena-green-800 bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-sena-green-600 to-sena-green-700 shadow-sm flex-shrink-0">
+                  <Icon name="award" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-sena-green-800 dark:text-sena-green-300">Top 5 Personas</h3>
+                  <p class="text-xs text-sena-green-600 dark:text-sena-green-400">Más accesos registrados</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-sena-green-800 dark:text-sena-green-300">Top 5 Personas</h3>
-                <p class="text-xs text-sena-green-600 dark:text-sena-green-400">Más accesos registrados</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('personas', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('personas', 'todos')
+                    ? 'bg-sena-green-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-sena-green-100 dark:hover:bg-gray-700 border border-sena-green-300 dark:border-gray-600'"
+                >
+                  <Icon name="users" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('personas', 'aprendices')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('personas', 'aprendices')
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="user" :size="11" class="inline mr-1" />
+                  Aprendices
+                </button>
+                <button
+                  @click="applyQuickFilter('personas', 'instructores')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('personas', 'instructores')
+                    ? 'bg-purple-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="briefcase" :size="11" class="inline mr-1" />
+                  Instructores
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">
@@ -511,13 +609,48 @@ const formatDuration = (minutes) => {
 
           <!-- Estado de Accesos -->
           <div class="overflow-hidden rounded-lg border border-blue-300 dark:border-blue-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-blue-300 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm flex-shrink-0">
-                <Icon name="activity" :size="20" class="text-white" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-blue-300 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm flex-shrink-0">
+                  <Icon name="activity" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-blue-800 dark:text-blue-200">Estado de Accesos</h3>
+                  <p class="text-xs text-blue-600 dark:text-blue-400">Distribución por estado</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-blue-800 dark:text-blue-200">Estado de Accesos</h3>
-                <p class="text-xs text-blue-600 dark:text-blue-400">Distribución por estado</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('estado', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('estado', 'todos')
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('estado', 'activos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('estado', 'activos')
+                    ? 'bg-green-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="check-circle" :size="11" class="inline mr-1" />
+                  Activos
+                </button>
+                <button
+                  @click="applyQuickFilter('estado', 'finalizados')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('estado', 'finalizados')
+                    ? 'bg-gray-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="x-circle" :size="11" class="inline mr-1" />
+                  Finalizados
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">
@@ -540,13 +673,48 @@ const formatDuration = (minutes) => {
         <div class="grid gap-3 sm:gap-4 lg:grid-cols-2">
           <!-- Por Tipo -->
           <div class="overflow-hidden rounded-lg border border-red-300 dark:border-red-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-red-300 dark:border-red-800 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-700 shadow-sm flex-shrink-0">
-                <Icon name="pie-chart" :size="20" class="text-white" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-red-300 dark:border-red-800 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-700 shadow-sm flex-shrink-0">
+                  <Icon name="pie-chart" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-red-800 dark:text-red-200">Por Tipo</h3>
+                  <p class="text-xs text-red-600 dark:text-red-400">Clasificación de incidencias</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-red-800 dark:text-red-200">Por Tipo</h3>
-                <p class="text-xs text-red-600 dark:text-red-400">Clasificación de incidencias</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('incidencias', 'todas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('incidencias', 'todas')
+                    ? 'bg-red-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="list" :size="11" class="inline mr-1" />
+                  Todas
+                </button>
+                <button
+                  @click="applyQuickFilter('incidencias', 'abiertas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('incidencias', 'abiertas')
+                    ? 'bg-orange-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="alert-circle" :size="11" class="inline mr-1" />
+                  Abiertas
+                </button>
+                <button
+                  @click="applyQuickFilter('incidencias', 'criticas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('incidencias', 'criticas')
+                    ? 'bg-red-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="alert-triangle" :size="11" class="inline mr-1" />
+                  Críticas
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">
@@ -560,13 +728,48 @@ const formatDuration = (minutes) => {
 
           <!-- Por Prioridad -->
           <div class="overflow-hidden rounded-lg border border-orange-300 dark:border-orange-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-orange-300 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-sm flex-shrink-0">
-                <Icon name="flag" :size="20" class="text-white" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-orange-300 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-sm flex-shrink-0">
+                  <Icon name="flag" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-orange-800 dark:text-orange-200">Por Prioridad</h3>
+                  <p class="text-xs text-orange-600 dark:text-orange-400">Nivel de urgencia</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-orange-800 dark:text-orange-200">Por Prioridad</h3>
-                <p class="text-xs text-orange-600 dark:text-orange-400">Nivel de urgencia</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('prioridad', 'todas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('prioridad', 'todas')
+                    ? 'bg-orange-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="list" :size="11" class="inline mr-1" />
+                  Todas
+                </button>
+                <button
+                  @click="applyQuickFilter('prioridad', 'alta')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('prioridad', 'alta')
+                    ? 'bg-red-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="arrow-up" :size="11" class="inline mr-1" />
+                  Alta
+                </button>
+                <button
+                  @click="applyQuickFilter('prioridad', 'media')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('prioridad', 'media')
+                    ? 'bg-yellow-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="minus" :size="11" class="inline mr-1" />
+                  Media
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">
@@ -589,13 +792,38 @@ const formatDuration = (minutes) => {
         <div class="grid gap-3 sm:gap-4 lg:grid-cols-3">
           <!-- Personas por Tipo -->
           <div class="overflow-hidden rounded-lg border border-cyan-300 dark:border-cyan-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-cyan-300 dark:border-cyan-800 bg-gradient-to-r from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-sm flex-shrink-0">
-                <Icon name="users" :size="20" class="text-white" />
+            <div class="flex flex-col items-stretch border-b border-cyan-300 dark:border-cyan-800 bg-gradient-to-r from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3 mb-2">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-sm flex-shrink-0">
+                  <Icon name="users" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-cyan-800 dark:text-cyan-200">Personas</h3>
+                  <p class="text-xs text-cyan-600 dark:text-cyan-400">Por tipo</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-cyan-800 dark:text-cyan-200">Personas</h3>
-                <p class="text-xs text-cyan-600 dark:text-cyan-400">Por tipo</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('recursos', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('recursos', 'todos')
+                    ? 'bg-cyan-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 border border-cyan-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('recursos', 'activas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('recursos', 'activas')
+                    ? 'bg-green-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="check" :size="11" class="inline mr-1" />
+                  Activas
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 250px;">
@@ -609,13 +837,38 @@ const formatDuration = (minutes) => {
 
           <!-- Portátiles por Marca -->
           <div class="overflow-hidden rounded-lg border border-purple-300 dark:border-purple-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-purple-300 dark:border-purple-800 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 shadow-sm flex-shrink-0">
-                <Icon name="laptop" :size="20" class="text-white" />
+            <div class="flex flex-col items-stretch border-b border-purple-300 dark:border-purple-800 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3 mb-2">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 shadow-sm flex-shrink-0">
+                  <Icon name="laptop" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-purple-800 dark:text-purple-200">Portátiles</h3>
+                  <p class="text-xs text-purple-600 dark:text-purple-400">Por marca</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-purple-800 dark:text-purple-200">Portátiles</h3>
-                <p class="text-xs text-purple-600 dark:text-purple-400">Por marca</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('portatiles', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('portatiles', 'todos')
+                    ? 'bg-purple-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 border border-purple-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('portatiles', 'disponibles')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('portatiles', 'disponibles')
+                    ? 'bg-green-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="check-circle" :size="11" class="inline mr-1" />
+                  Disponibles
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 250px;">
@@ -629,13 +882,38 @@ const formatDuration = (minutes) => {
 
           <!-- Vehículos por Tipo -->
           <div class="overflow-hidden rounded-lg border border-orange-300 dark:border-orange-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-orange-300 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-sm flex-shrink-0">
-                <Icon name="truck" :size="20" class="text-white" />
+            <div class="flex flex-col items-stretch border-b border-orange-300 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3 mb-2">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-sm flex-shrink-0">
+                  <Icon name="truck" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-orange-800 dark:text-orange-200">Vehículos</h3>
+                  <p class="text-xs text-orange-600 dark:text-orange-400">Por tipo</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-orange-800 dark:text-orange-200">Vehículos</h3>
-                <p class="text-xs text-orange-600 dark:text-orange-400">Por tipo</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('vehiculos', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('vehiculos', 'todos')
+                    ? 'bg-orange-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-orange-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('vehiculos', 'registrados')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('vehiculos', 'registrados')
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="file-text" :size="11" class="inline mr-1" />
+                  Registrados
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 250px;">
@@ -658,13 +936,48 @@ const formatDuration = (minutes) => {
         <div class="grid gap-3 sm:gap-4 lg:grid-cols-2">
           <!-- Accesos por Jornada -->
           <div class="overflow-hidden rounded-lg border border-yellow-300 dark:border-yellow-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-yellow-300 dark:border-yellow-800 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-600 shadow-sm flex-shrink-0">
-                <Icon name="clock" :size="20" class="text-gray-900" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-yellow-300 dark:border-yellow-800 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-600 shadow-sm flex-shrink-0">
+                  <Icon name="clock" :size="20" class="text-gray-900" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-yellow-800 dark:text-yellow-200">Por Jornada</h3>
+                  <p class="text-xs text-yellow-600 dark:text-yellow-400">Accesos por horario</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-yellow-800 dark:text-yellow-200">Por Jornada</h3>
-                <p class="text-xs text-yellow-600 dark:text-yellow-400">Accesos por horario</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('jornada', 'todas')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('jornada', 'todas')
+                    ? 'bg-yellow-500 text-gray-900 shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-gray-700 border border-yellow-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todas
+                </button>
+                <button
+                  @click="applyQuickFilter('jornada', 'diurna')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('jornada', 'diurna')
+                    ? 'bg-orange-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="sun" :size="11" class="inline mr-1" />
+                  Diurna
+                </button>
+                <button
+                  @click="applyQuickFilter('jornada', 'nocturna')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('jornada', 'nocturna')
+                    ? 'bg-indigo-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="moon" :size="11" class="inline mr-1" />
+                  Nocturna
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">
@@ -678,13 +991,48 @@ const formatDuration = (minutes) => {
 
           <!-- Accesos por Programa -->
           <div class="overflow-hidden rounded-lg border border-sena-green-300 dark:border-sena-green-800 bg-theme-card shadow-theme-sm">
-            <div class="flex items-center gap-2 sm:gap-3 border-b border-sena-green-300 dark:border-sena-green-800 bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30 p-3 sm:p-4">
-              <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-sena-green-600 to-sena-green-700 shadow-sm flex-shrink-0">
-                <Icon name="graduation-cap" :size="20" class="text-white" />
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-b border-sena-green-300 dark:border-sena-green-800 bg-gradient-to-r from-sena-green-50 to-sena-green-100 dark:from-sena-green-900/20 dark:to-sena-green-900/30 p-3 sm:p-4">
+              <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-gradient-to-br from-sena-green-600 to-sena-green-700 shadow-sm flex-shrink-0">
+                  <Icon name="graduation-cap" :size="20" class="text-white" />
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-sm sm:text-base font-bold text-sena-green-800 dark:text-sena-green-300">Por Programa</h3>
+                  <p class="text-xs text-sena-green-600 dark:text-sena-green-400">Top 10 programas</p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <h3 class="text-sm sm:text-base font-bold text-sena-green-800 dark:text-sena-green-300">Por Programa</h3>
-                <p class="text-xs text-sena-green-600 dark:text-sena-green-400">Top 10 programas</p>
+              <!-- Filtros rápidos -->
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  @click="applyQuickFilter('programas', 'todos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('programas', 'todos')
+                    ? 'bg-sena-green-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-sena-green-50 dark:hover:bg-gray-700 border border-sena-green-300 dark:border-gray-600'"
+                >
+                  <Icon name="grid" :size="11" class="inline mr-1" />
+                  Todos
+                </button>
+                <button
+                  @click="applyQuickFilter('programas', 'vigentes')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('programas', 'vigentes')
+                    ? 'bg-green-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="check-circle" :size="11" class="inline mr-1" />
+                  Vigentes
+                </button>
+                <button
+                  @click="applyQuickFilter('programas', 'tecnologos')"
+                  class="px-2 py-1 text-xs font-medium rounded transition-all"
+                  :class="isFilterActive('programas', 'tecnologos')
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'"
+                >
+                  <Icon name="award" :size="11" class="inline mr-1" />
+                  Tecnólogos
+                </button>
               </div>
             </div>
             <div class="p-4" style="height: 280px;">

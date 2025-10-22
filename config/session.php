@@ -32,7 +32,7 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    'lifetime' => (int) env('SESSION_LIFETIME', 1440), // 24 horas
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
@@ -213,5 +213,16 @@ return [
     */
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Session Lottery
+    |--------------------------------------------------------------------------
+    |
+    | Reduce garbage collection frequency to improve performance
+    |
+    */
+    
+    'lottery' => [2, 1000],
 
 ];

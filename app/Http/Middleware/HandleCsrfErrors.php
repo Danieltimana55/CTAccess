@@ -21,30 +21,29 @@ class HandleCsrfErrors
             return $next($request);
         } catch (TokenMismatchException $e) {
             // Regenerar el token CSRF
-            $request->session()->regenerateToken();
-
-            // Log para debugging
-            Log::warning('CSRF token mismatch detectado', [
-                'url' => $request->fullUrl(),
-                'method' => $request->method(),
-                'ip' => $request->ip(),
-            ]);
-
-            // Si es una petición AJAX/Inertia, devolver error JSON con instrucciones de recarga
-            if ($request->expectsJson() || $request->header('X-Inertia')) {
-                return response()->json([
-                    'message' => 'La sesión ha expirado. Por favor, recarga la página.',
-                    'errors' => [
-                        'csrf' => ['La página ha expirado por inactividad. Por favor recarga e intenta de nuevo.']
-                    ],
-                    'reload' => true  // Señal para que el frontend recargue automáticamente
-                ], 419);
+            if ($request->hasSession()) {
+                $request->session()->regenerateToken();
             }
 
-            // Para peticiones normales, redirigir con mensaje
-            return redirect()->back()
-                ->withInput($request->except('password', 'contraseña', 'password_confirmation'))
-                ->withErrors(['csrf' => 'La página ha expirado por inactividad. Por favor intenta de nuevo.']);
+            // Log para debugging (solo en desarrollo)
+            if (config('app.debug')) {
+                Log::info('CSRF token regenerado', [
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                ]);
+            }
+
+            // Si es una petición AJAX/Inertia, devolver respuesta que recargue automáticamente
+            if ($request->expectsJson() || $request->header('X-Inertia')) {
+                return response()->json([
+                    'message' => 'Sesión actualizada',
+                    'reload' => true
+                ], 200); // Cambiar a 200 para que se maneje mejor en el frontend
+            }
+
+            // Para peticiones normales, redirigir y reintentar automáticamente
+            return redirect($request->fullUrl())
+                ->withInput($request->except(['password', 'contraseña', 'password_confirmation', '_token']));
         }
     }
 }
