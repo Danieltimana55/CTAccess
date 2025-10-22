@@ -1,4 +1,4 @@
-# 🏢 CTAccess - Sistema de Control de Acceso
+# CTAccess - Sistema de Control de Acceso
 
 <div align="center">
 
