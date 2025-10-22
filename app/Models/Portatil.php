@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Portatil extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActivityLog, SoftDeletes;
 
     protected $table = 'portatiles';
     protected $primaryKey = 'portatil_id';

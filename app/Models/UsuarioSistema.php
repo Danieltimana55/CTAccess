@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioSistema extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasActivityLog, SoftDeletes;
 
     protected $table = 'usuarios_sistema';
     protected $primaryKey = 'idUsuario';

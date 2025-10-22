@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\LogActivity::class, // Audit logging
         ]);
 
         // Envolver el grupo web con el manejador de errores CSRF
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Alias middleware
         $middleware->alias([
             'check.system.role' => \App\Http\Middleware\CheckSystemRole::class,
+            'log.activity' => \App\Http\Middleware\LogActivity::class,
         ]);
 
         // Configurar la prioridad del middleware de sesión

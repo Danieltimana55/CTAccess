@@ -71,6 +71,16 @@ Route::prefix('system')->name('system.')->group(function () {
             Route::put('personas/{persona}', [App\Http\Controllers\System\Admin\PersonasController::class, 'update'])->name('personas.update');
             Route::delete('personas/{persona}', [App\Http\Controllers\System\Admin\PersonasController::class, 'destroy'])->name('personas.destroy');
 
+            // Importación/Exportación de Personas
+            Route::prefix('personas/import-export')->name('personas.import-export.')->group(function () {
+                Route::get('/', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'index'])->name('index');
+                Route::get('/export', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'export'])->name('export');
+                Route::get('/template', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'downloadTemplate'])->name('template');
+                Route::post('/validate', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'validateFile'])->name('validate');
+                Route::post('/import', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'import'])->name('import');
+                Route::get('/history', [App\Http\Controllers\System\Admin\PersonaImportExportController::class, 'history'])->name('history');
+            });
+
             // Gestión de portátiles
             Route::get('portatiles', [App\Http\Controllers\System\Admin\PortatilesController::class, 'index'])->name('portatiles.index');
             Route::get('portatiles/data', [App\Http\Controllers\System\Admin\PortatilesController::class, 'data'])->name('portatiles.data');
@@ -94,6 +104,18 @@ Route::prefix('system')->name('system.')->group(function () {
             Route::put('programas-formacion/{programa}', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'update'])->name('programas-formacion.update');
             Route::delete('programas-formacion/{programa}', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'destroy'])->name('programas-formacion.destroy');
             Route::post('programas-formacion/{programa}/toggle', [App\Http\Controllers\System\Admin\ProgramasFormacionController::class, 'toggleActivo'])->name('programas-formacion.toggle');
+
+            // Registro de Auditoría
+            Route::get('/activity-logs', [App\Http\Controllers\System\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+            Route::get('/activity-logs/{log}', [App\Http\Controllers\System\Admin\ActivityLogController::class, 'show'])->name('activity-logs.show');
+            Route::post('/activity-logs/cleanup', [App\Http\Controllers\System\Admin\ActivityLogController::class, 'cleanup'])->name('activity-logs.cleanup');
+            Route::get('/activity-logs-export', [App\Http\Controllers\System\Admin\ActivityLogController::class, 'export'])->name('activity-logs.export');
+
+            // Papelera de Reciclaje
+            Route::get('/papelera', [App\Http\Controllers\System\Admin\PapeleraController::class, 'index'])->name('papelera.index');
+            Route::post('/papelera/restore', [App\Http\Controllers\System\Admin\PapeleraController::class, 'restore'])->name('papelera.restore');
+            Route::post('/papelera/force-delete', [App\Http\Controllers\System\Admin\PapeleraController::class, 'forceDelete'])->name('papelera.force-delete');
+            Route::post('/papelera/empty', [App\Http\Controllers\System\Admin\PapeleraController::class, 'empty'])->name('papelera.empty');
 
             // Accesos (reutilizando controlador del celador) - Admin tiene todas las funcionalidades
             Route::get('/accesos', [CeladorAccesoController::class, 'index'])->name('accesos.index');

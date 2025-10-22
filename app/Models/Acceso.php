@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
@@ -9,7 +10,7 @@ use Carbon\Carbon;
 
 class Acceso extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActivityLog;
     
     // Constantes de estado
     const ESTADO_ACTIVO = 'activo';

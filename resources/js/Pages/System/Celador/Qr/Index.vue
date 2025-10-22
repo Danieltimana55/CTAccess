@@ -398,46 +398,46 @@ onUnmounted(() => {
     <Head title="Verificación QR" />
 
     <template #header>
-      <div class="flex items-center justify-between gap-2">
-        <h2 class="text-base sm:text-lg font-semibold text-theme-primary">Verificación QR</h2>
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-theme-primary">Verificación QR</h2>
         
-        <!-- Botones de control compactos en header -->
-        <div class="flex items-center gap-1.5">
+        <!-- Botones de control en header -->
+        <div class="flex items-center gap-3">
           <!-- Toggle instantáneo -->
-          <label class="flex items-center gap-1 text-[10px] text-theme-secondary">
+          <label class="flex items-center gap-2 text-sm text-theme-secondary">
             <input 
               type="checkbox" 
               v-model="registroInstantaneo"
-              class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 w-3 h-3"
+              class="rounded border-gray-300 text-blue-700 focus:ring-blue-600 w-4 h-4"
             >
-            <span class="hidden sm:inline">Inst</span>
+            <span>Instantáneo</span>
           </label>
           
           <!-- Botón Escanear QR -->
           <button
             @click="openQrScanner"
-            class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md px-2 py-1 text-xs font-medium touch-manipulation transition-colors"
+            class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg px-4 py-2.5 text-sm font-semibold shadow-md touch-manipulation transition-colors"
           >
-            <Icon name="qr-code" :size="14" />
-            <span class="hidden sm:inline">Escanear</span>
+            <Icon name="qr-code" :size="18" />
+            <span>Escanear</span>
           </button>
 
           <!-- Botón Manual -->
           <button
             @click="openCedulaModal"
-            class="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md px-2 py-1 text-xs font-medium touch-manipulation transition-colors"
+            class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg px-4 py-2.5 text-sm font-semibold shadow-md touch-manipulation transition-colors"
           >
-            <Icon name="edit" :size="14" />
-            <span class="hidden sm:inline">Manual</span>
+            <Icon name="edit" :size="18" />
+            <span>Manual</span>
           </button>
           
           <!-- Botón limpiar -->
           <button 
             @click="limpiarCodigos"
-            class="p-1 text-theme-muted hover:text-theme-primary hover:bg-theme-secondary rounded transition-colors"
+            class="p-2.5 text-theme-muted hover:text-theme-primary hover:bg-theme-secondary rounded-lg transition-colors"
             title="Limpiar"
           >
-            <Icon name="x" :size="14" />
+            <Icon name="x" :size="18" />
           </button>
         </div>
         
@@ -493,271 +493,310 @@ onUnmounted(() => {
       <div class="mx-auto max-w-7xl space-y-2 px-2 sm:px-4">
         
         <!-- Notificaciones -->
-        <div v-if="notification" class="fixed top-2 right-2 z-50 max-w-sm">
+        <div v-if="notification" class="fixed top-4 right-4 z-50 max-w-md">
           <div 
             :class="{
-              'bg-green-50 border-green-200 text-green-800': notification.type === 'success',
-              'bg-yellow-50 border-yellow-200 text-yellow-800': notification.type === 'warning',
-              'bg-red-50 border-red-200 text-red-800': notification.type === 'error'
+              'bg-green-50 border-green-300 text-green-900': notification.type === 'success',
+              'bg-yellow-50 border-yellow-300 text-yellow-900': notification.type === 'warning',
+              'bg-red-50 border-red-300 text-red-900': notification.type === 'error'
             }"
-            class="border rounded-lg p-2 shadow-lg text-xs"
+            class="border-2 rounded-xl p-4 shadow-xl"
           >
-            <div class="flex items-start gap-2">
-              <Icon v-if="notification.type === 'success'" name="check-circle" :size="16" class="text-green-400 flex-shrink-0" />
-              <Icon v-else-if="notification.type === 'warning'" name="alert-triangle" :size="16" class="text-yellow-400 flex-shrink-0" />
-              <Icon v-else name="x-circle" :size="16" class="text-red-400 flex-shrink-0" />
+            <div class="flex items-start gap-3">
+              <Icon v-if="notification.type === 'success'" name="check-circle" :size="24" class="text-green-600 flex-shrink-0" />
+              <Icon v-else-if="notification.type === 'warning'" name="alert-triangle" :size="24" class="text-yellow-600 flex-shrink-0" />
+              <Icon v-else name="x-circle" :size="24" class="text-red-600 flex-shrink-0" />
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-medium">{{ notification.message }}</p>
-                <div v-if="notification.data" class="mt-1 text-xs opacity-75">
+                <p class="text-sm font-semibold">{{ notification.message }}</p>
+                <div v-if="notification.data" class="mt-2 text-sm opacity-80">
                   <div v-if="notification.data.persona">{{ notification.data.persona }}</div>
                 </div>
               </div>
-              <button @click="closeNotification" class="flex-shrink-0">
-                <Icon name="x" :size="14" />
+              <button @click="closeNotification" class="flex-shrink-0 hover:opacity-70">
+                <Icon name="x" :size="20" />
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Estadísticas ultra-compactas -->
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-1.5">
-            <div class="flex items-center gap-1.5">
-              <div class="w-7 h-7 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon name="log-in" :size="14" class="text-green-600 dark:text-green-400" />
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          <div class="bg-theme-card border border-theme-primary rounded-xl shadow-md p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0">
+                <Icon name="log-in" :size="24" class="text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-theme-secondary leading-tight">Entradas</p>
-                <p class="text-base font-bold text-theme-primary leading-tight">{{ estadisticasActuales?.total_entradas || 0 }}</p>
+                <p class="text-xs text-theme-secondary font-medium">Entradas</p>
+                <p class="text-2xl font-bold text-theme-primary">{{ estadisticasActuales?.total_entradas || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-1.5">
-            <div class="flex items-center gap-1.5">
-              <div class="w-7 h-7 rounded-md bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon name="log-out" :size="14" class="text-red-600 dark:text-red-400" />
+          <div class="bg-theme-card border border-theme-primary rounded-xl shadow-md p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0">
+                <Icon name="log-out" :size="24" class="text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-theme-secondary leading-tight">Salidas</p>
-                <p class="text-base font-bold text-theme-primary leading-tight">{{ estadisticasActuales?.total_salidas || 0 }}</p>
+                <p class="text-xs text-theme-secondary font-medium">Salidas</p>
+                <p class="text-2xl font-bold text-theme-primary">{{ estadisticasActuales?.total_salidas || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-1.5">
-            <div class="flex items-center gap-1.5">
-              <div class="w-7 h-7 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon name="users" :size="14" class="text-blue-600 dark:text-blue-400" />
+          <div class="bg-theme-card border border-theme-primary rounded-xl shadow-md p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0">
+                <Icon name="users" :size="24" class="text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-theme-secondary leading-tight">Activos</p>
-                <p class="text-base font-bold text-theme-primary leading-tight">{{ estadisticasActuales?.activos_actuales || 0 }}</p>
+                <p class="text-xs text-theme-secondary font-medium">Activos</p>
+                <p class="text-2xl font-bold text-theme-primary">{{ estadisticasActuales?.activos_actuales || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-1.5">
-            <div class="flex items-center gap-1.5">
-              <div class="w-7 h-7 rounded-md bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon name="laptop" :size="14" class="text-cyan-600 dark:text-cyan-400" />
+          <div class="bg-theme-card border border-theme-primary rounded-xl shadow-md p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0">
+                <Icon name="laptop" :size="24" class="text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-theme-secondary leading-tight">Portátiles</p>
-                <p class="text-base font-bold text-theme-primary leading-tight">{{ estadisticasActuales?.con_portatil || 0 }}</p>
+                <p class="text-xs text-theme-secondary font-medium">Portátiles</p>
+                <p class="text-2xl font-bold text-theme-primary">{{ estadisticasActuales?.con_portatil || 0 }}</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-1.5">
-            <div class="flex items-center gap-1.5">
-              <div class="w-7 h-7 rounded-md bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
-                <Icon name="car" :size="14" class="text-yellow-600 dark:text-yellow-400" />
+          <div class="bg-theme-card border border-theme-primary rounded-xl shadow-md p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-700 flex items-center justify-center flex-shrink-0">
+                <Icon name="car" :size="24" class="text-white" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-theme-secondary leading-tight">Vehículos</p>
-                <p class="text-base font-bold text-theme-primary leading-tight">{{ estadisticasActuales?.con_vehiculo || 0 }}</p>
+                <p class="text-xs text-theme-secondary font-medium">Vehículos</p>
+                <p class="text-2xl font-bold text-theme-primary">{{ estadisticasActuales?.con_vehiculo || 0 }}</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Códigos escaneados (si hay) -->
-        <div v-if="scannedCodes.persona || scannedCodes.portatil" class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-2">
-          <div class="flex flex-wrap items-center gap-1.5">
-            <div v-if="scannedCodes.persona" class="flex items-center gap-1 px-2 py-1 bg-green-50 dark:bg-green-900/20 rounded text-[10px]">
-              <Icon name="user" :size="10" class="text-green-600 dark:text-green-400" />
-              <span class="font-medium text-green-800 dark:text-green-300">Persona</span>
+        <div v-if="scannedCodes.persona || scannedCodes.portatil" class="bg-theme-card border-2 border-blue-700 rounded-xl shadow-lg p-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <div v-if="scannedCodes.persona" class="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-sm">
+              <Icon name="user" :size="18" class="text-blue-700" />
+              <span class="font-semibold text-blue-900 dark:text-blue-300">Persona Escaneada</span>
             </div>
 
-            <div v-if="scannedCodes.portatil" class="flex items-center gap-1 px-2 py-1 bg-blue-50 dark:bg-blue-900/20 rounded text-[10px]">
-              <Icon name="laptop" :size="10" class="text-blue-600 dark:text-blue-400" />
-              <span class="font-medium text-blue-800 dark:text-blue-300">Portátil</span>
+            <div v-if="scannedCodes.portatil" class="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-sm">
+              <Icon name="laptop" :size="18" class="text-blue-700" />
+              <span class="font-semibold text-blue-900 dark:text-blue-300">Portátil Escaneado</span>
             </div>
 
             <button
               @click="procesarAcceso"
               :disabled="!canProcess"
-              class="ml-auto flex items-center gap-1 px-3 py-1 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium touch-manipulation transition-colors"
+              class="ml-auto flex items-center gap-2 px-5 py-2.5 bg-blue-700 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold shadow-md touch-manipulation transition-colors"
             >
-              <Icon v-if="isProcessing" name="loader" :size="12" class="animate-spin" />
-              <Icon v-else name="check-circle" :size="12" />
-              <span>{{ isProcessing ? 'Procesando...' : 'Registrar' }}</span>
+              <Icon v-if="isProcessing" name="loader" :size="18" class="animate-spin" />
+              <Icon v-else name="check-circle" :size="18" />
+              <span>{{ isProcessing ? 'Procesando...' : 'Registrar Acceso' }}</span>
             </button>
           </div>
         </div>
 
-        <!-- Grid principal optimizado -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-          <!-- Info de persona + Accesos activos -->
-          <div class="space-y-2">
-            <!-- Info de persona escaneada -->
-            <div v-if="showPersonaInfo && personaInfo" class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-2">
-              <h3 class="text-xs font-semibold text-theme-primary mb-1">Info Persona</h3>
+        <!-- Contenedor principal con diseño vertical -->
+        <div class="space-y-4">
+          <!-- Info de persona escaneada (si existe) -->
+          <div v-if="showPersonaInfo && personaInfo" class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-2 border-blue-700 rounded-2xl shadow-lg p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-16 h-16 rounded-xl bg-blue-700 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Icon name="user" :size="32" class="text-white" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold text-theme-primary mb-1">Información de Persona</h3>
+                <p class="text-xs text-theme-secondary">Datos del registro escaneado</p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                <p class="text-xs text-theme-secondary font-medium mb-1">Nombre Completo</p>
+                <p class="text-sm font-bold text-theme-primary">{{ personaInfo.persona.Nombre }}</p>
+              </div>
               
-              <div class="space-y-0.5 text-[10px]">
-                <div class="flex justify-between">
-                  <span class="text-theme-secondary">Nombre:</span>
-                  <span class="font-medium text-theme-primary truncate ml-1">{{ personaInfo.persona.Nombre }}</span>
-                </div>
-                
-                <div class="flex justify-between">
-                  <span class="text-theme-secondary">Doc:</span>
-                  <span class="font-medium text-theme-primary">{{ personaInfo.persona.documento }}</span>
-                </div>
-                
-                <div class="flex justify-between">
-                  <span class="text-theme-secondary">Tipo:</span>
-                  <span class="font-medium text-theme-primary">{{ personaInfo.persona.TipoPersona }}</span>
-                </div>
-
-                <div v-if="personaInfo.tiene_acceso_activo" class="p-1 bg-yellow-50 dark:bg-yellow-900/20 rounded text-[10px] mt-1">
-                  <p class="font-medium text-yellow-800 dark:text-yellow-300">⚠️ Acceso activo</p>
-                </div>
+              <div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                <p class="text-xs text-theme-secondary font-medium mb-1">Documento</p>
+                <p class="text-sm font-bold text-theme-primary">{{ personaInfo.persona.documento }}</p>
+              </div>
+              
+              <div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                <p class="text-xs text-theme-secondary font-medium mb-1">Tipo de Persona</p>
+                <p class="text-sm font-bold text-theme-primary">{{ personaInfo.persona.TipoPersona }}</p>
               </div>
             </div>
 
-            <!-- Accesos activos con gráficos -->
-            <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm p-2">
-              <h3 class="text-xs font-semibold text-theme-primary mb-1.5">Activos ({{ accesosActivosActuales?.length || 0 }})</h3>
-              
-              <div v-if="accesosActivosActuales?.length" class="space-y-1 max-h-48 overflow-y-auto">
-                <div v-for="acceso in accesosActivosActuales.slice(0, 8)" :key="acceso.id" class="border border-theme-primary rounded p-1.5 hover:bg-theme-secondary transition-colors">
-                  <div class="flex items-center justify-between mb-0.5">
-                    <p class="font-medium text-theme-primary text-[10px] truncate flex-1">{{ acceso.persona?.Nombre }}</p>
-                    <div class="flex gap-0.5 flex-shrink-0 ml-1 text-[10px]">
-                      <span v-if="acceso.portatil" title="Portátil">💻</span>
-                      <span v-if="acceso.vehiculo" title="Vehículo">🚗</span>
+            <div v-if="personaInfo.tiene_acceso_activo" class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl border-2 border-yellow-400">
+              <div class="flex items-center gap-3">
+                <Icon name="alert-triangle" :size="24" class="text-yellow-700 flex-shrink-0" />
+                <div>
+                  <p class="font-bold text-yellow-900 dark:text-yellow-300 text-sm">⚠️ Acceso Activo Detectado</p>
+                  <p class="text-xs text-yellow-800 dark:text-yellow-400 mt-1">Esta persona ya tiene un acceso registrado sin salida</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid de 2 columnas para Accesos Activos e Historial -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Accesos activos con diseño mejorado -->
+            <div class="bg-theme-card border-2 border-theme-primary rounded-2xl shadow-lg overflow-hidden">
+              <div class="bg-blue-700 text-white p-5">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                      <Icon name="users" :size="20" class="text-white" />
+                    </div>
+                    <div>
+                      <h3 class="text-base font-bold">Accesos Activos</h3>
+                      <p class="text-xs text-blue-100">Personas actualmente en las instalaciones</p>
                     </div>
                   </div>
-                  <div class="flex items-center gap-1 text-[10px] text-theme-secondary mb-0.5">
-                    <Icon name="clock" :size="9" />
-                    <span>{{ formatTime(acceso.fecha_entrada) }}</span>
-                    <span class="ml-auto font-medium">{{ formatDuration(acceso.fecha_entrada) }}</span>
-                  </div>
-                  <!-- Barra de progreso visual de duración -->
-                  <div class="w-full bg-theme-secondary rounded-full h-0.5">
-                    <div 
-                      class="h-0.5 rounded-full transition-all"
-                      :class="{
-                        'bg-green-500': calcularMinutos(acceso.fecha_entrada) < 60,
-                        'bg-yellow-500': calcularMinutos(acceso.fecha_entrada) >= 60 && calcularMinutos(acceso.fecha_entrada) < 180,
-                        'bg-orange-500': calcularMinutos(acceso.fecha_entrada) >= 180 && calcularMinutos(acceso.fecha_entrada) < 360,
-                        'bg-red-500': calcularMinutos(acceso.fecha_entrada) >= 360
-                      }"
-                      :style="{ width: Math.min(100, (calcularMinutos(acceso.fecha_entrada) / 360) * 100) + '%' }"
-                    ></div>
-                  </div>
+                  <div class="text-2xl font-bold">{{ accesosActivosActuales?.length || 0 }}</div>
                 </div>
               </div>
               
-              <div v-else class="text-center text-theme-secondary py-2 text-[10px]">
-                <Icon name="users" :size="16" class="mx-auto mb-0.5 opacity-50" />
-                <p>Sin accesos activos</p>
+              <div class="p-4">
+                <div v-if="accesosActivosActuales?.length" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                  <div v-for="acceso in accesosActivosActuales.slice(0, 8)" :key="acceso.id" 
+                       class="bg-theme-secondary border border-theme-primary rounded-xl p-4 hover:shadow-md hover:border-blue-700 transition-all">
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex-1 min-w-0">
+                        <p class="font-bold text-theme-primary text-sm truncate">{{ acceso.persona?.Nombre }}</p>
+                        <p class="text-xs text-theme-secondary">{{ acceso.persona?.documento }}</p>
+                      </div>
+                      <div class="flex gap-1 flex-shrink-0 ml-2 text-lg">
+                        <span v-if="acceso.portatil" title="Con portátil">💻</span>
+                        <span v-if="acceso.vehiculo" title="Con vehículo">🚗</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs text-theme-secondary mb-2">
+                      <div class="flex items-center gap-1">
+                        <Icon name="clock" :size="12" />
+                        <span>{{ formatTime(acceso.fecha_entrada) }}</span>
+                      </div>
+                      <span class="font-semibold text-theme-primary">{{ formatDuration(acceso.fecha_entrada) }}</span>
+                    </div>
+                    
+                    <!-- Barra de progreso visual -->
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div 
+                        class="h-2 rounded-full transition-all"
+                        :class="{
+                          'bg-green-500': calcularMinutos(acceso.fecha_entrada) < 60,
+                          'bg-yellow-500': calcularMinutos(acceso.fecha_entrada) >= 60 && calcularMinutos(acceso.fecha_entrada) < 180,
+                          'bg-orange-500': calcularMinutos(acceso.fecha_entrada) >= 180 && calcularMinutos(acceso.fecha_entrada) < 360,
+                          'bg-red-500': calcularMinutos(acceso.fecha_entrada) >= 360
+                        }"
+                        :style="{ width: Math.min(100, (calcularMinutos(acceso.fecha_entrada) / 360) * 100) + '%' }"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-else class="text-center text-theme-secondary py-12">
+                  <Icon name="users" :size="48" class="mx-auto mb-3 opacity-30" />
+                  <p class="font-semibold text-sm">Sin accesos activos</p>
+                  <p class="text-xs mt-1">No hay personas en las instalaciones</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Historial con filtros -->
-          <div class="bg-theme-card border border-theme-primary rounded-lg shadow-sm">
-            <div class="p-2 border-b border-theme-primary">
-              <div class="flex items-center justify-between mb-1">
-                <h3 class="text-xs font-semibold text-theme-primary">Historial del Día</h3>
-                <span class="text-[10px] text-theme-secondary">{{ historialRecienteActual?.length || 0 }}</span>
+            <!-- Historial con diseño mejorado -->
+            <div class="bg-theme-card border-2 border-theme-primary rounded-2xl shadow-lg overflow-hidden">
+              <div class="bg-blue-700 text-white p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                      <Icon name="file-text" :size="20" class="text-white" />
+                    </div>
+                    <div>
+                      <h3 class="text-base font-bold">Historial del Día</h3>
+                      <p class="text-xs text-blue-100">Registro de todos los accesos</p>
+                    </div>
+                  </div>
+                  <div class="text-2xl font-bold">{{ historialRecienteActual?.length || 0 }}</div>
+                </div>
+                
+                <!-- Filtros rápidos -->
+                <div class="flex gap-2">
+                  <button class="px-3 py-2 text-xs font-semibold rounded-lg bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm">
+                    <Icon name="users" :size="14" class="inline mr-1" />
+                    Todos
+                  </button>
+                  <button class="px-3 py-2 text-xs font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                    <Icon name="log-in" :size="14" class="inline mr-1" />
+                    Activos
+                  </button>
+                  <button class="px-3 py-2 text-xs font-semibold rounded-lg hover:bg-white/10 transition-colors">
+                    <Icon name="check" :size="14" class="inline mr-1" />
+                    Finalizados
+                  </button>
+                </div>
               </div>
               
-              <!-- Filtros rápidos -->
-              <div class="flex gap-1">
-                <button class="px-2 py-0.5 text-[10px] rounded bg-theme-secondary hover:bg-theme-primary transition-colors border border-theme-primary">
-                  <Icon name="users" :size="10" class="inline mr-0.5" />
-                  Todos
-                </button>
-                <button class="px-2 py-0.5 text-[10px] rounded hover:bg-theme-secondary transition-colors border border-theme-primary">
-                  <Icon name="log-in" :size="10" class="inline mr-0.5 text-green-600" />
-                  Activos
-                </button>
-                <button class="px-2 py-0.5 text-[10px] rounded hover:bg-theme-secondary transition-colors border border-theme-primary">
-                  <Icon name="check" :size="10" class="inline mr-0.5 text-gray-600" />
-                  Finalizados
-                </button>
+              <div class="p-4">
+                <div v-if="historialRecienteActual?.length" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                  <div v-for="acceso in historialRecienteActual.slice(0, 10)" :key="acceso.id" 
+                       class="bg-theme-secondary border border-theme-primary rounded-xl p-3 hover:shadow-md hover:border-blue-700 transition-all">
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex-1 min-w-0">
+                        <p class="font-bold text-theme-primary text-sm truncate">{{ acceso.persona?.Nombre }}</p>
+                        <p class="text-xs text-theme-secondary">{{ acceso.persona?.documento }}</p>
+                      </div>
+                      <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                        <span v-if="acceso.portatil" title="Con portátil" class="text-sm">💻</span>
+                        <span v-if="acceso.vehiculo" title="Con vehículo" class="text-sm">🚗</span>
+                        <span 
+                          :class="{
+                            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300': acceso.estado === 'activo',
+                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300': acceso.estado === 'finalizado',
+                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300': acceso.estado === 'incidencia'
+                          }"
+                          class="px-2 py-1 text-xs font-semibold rounded-lg ml-2"
+                        >
+                          {{ acceso.estado === 'activo' ? 'Activo' : acceso.estado === 'finalizado' ? 'Finalizado' : 'Incidencia' }}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <p class="text-theme-secondary font-medium mb-0.5">Entrada</p>
+                        <p class="font-semibold text-theme-primary">{{ formatTime(acceso.fecha_entrada) }}</p>
+                      </div>
+                      <div>
+                        <p class="text-theme-secondary font-medium mb-0.5">Salida</p>
+                        <p class="font-semibold text-theme-primary">{{ acceso.fecha_salida ? formatTime(acceso.fecha_salida) : '-' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-theme-secondary font-medium mb-0.5">Duración</p>
+                        <p class="font-semibold text-theme-primary">{{ formatDuration(acceso.fecha_entrada, acceso.fecha_salida) }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div v-else class="text-center text-theme-secondary py-12">
+                  <Icon name="file-text" :size="48" class="mx-auto mb-3 opacity-30" />
+                  <p class="font-semibold text-sm">Sin registros del día</p>
+                  <p class="text-xs mt-1">Aún no hay accesos registrados hoy</p>
+                </div>
               </div>
             </div>
-          
-          <div class="overflow-x-auto max-h-64">
-            <table class="min-w-full divide-y divide-theme-primary text-[10px]">
-              <thead class="bg-theme-secondary sticky top-0">
-                <tr>
-                  <th class="px-2 py-1 text-left font-medium text-theme-secondary uppercase">Persona</th>
-                  <th class="px-2 py-1 text-left font-medium text-theme-secondary uppercase">Entrada</th>
-                  <th class="px-2 py-1 text-left font-medium text-theme-secondary uppercase">Salida</th>
-                  <th class="px-2 py-1 text-left font-medium text-theme-secondary uppercase">Dur.</th>
-                  <th class="px-2 py-1 text-center font-medium text-theme-secondary uppercase">Rec.</th>
-                  <th class="px-2 py-1 text-left font-medium text-theme-secondary uppercase">Estado</th>
-                </tr>
-              </thead>
-              <tbody class="bg-theme-card divide-y divide-theme-primary">
-                <tr v-for="acceso in historialRecienteActual?.slice(0, 10)" :key="acceso.id" class="hover:bg-theme-secondary transition-colors">
-                  <td class="px-3 py-2">
-                    <div class="font-medium text-theme-primary truncate max-w-xs">{{ acceso.persona?.Nombre }}</div>
-                    <div class="text-theme-secondary">{{ acceso.persona?.documento }}</div>
-                  </td>
-                  <td class="px-3 py-2 text-theme-primary whitespace-nowrap">
-                    {{ formatTime(acceso.fecha_entrada) }}
-                  </td>
-                  <td class="px-3 py-2 text-theme-primary whitespace-nowrap">
-                    {{ acceso.fecha_salida ? formatTime(acceso.fecha_salida) : '-' }}
-                  </td>
-                  <td class="px-3 py-2 text-theme-primary whitespace-nowrap">
-                    {{ formatDuration(acceso.fecha_entrada, acceso.fecha_salida) }}
-                  </td>
-                  <td class="px-3 py-2 text-center">
-                    <div class="flex gap-1 justify-center">
-                      <span v-if="acceso.portatil" title="Portátil">💻</span>
-                      <span v-if="acceso.vehiculo" title="Vehículo">🚗</span>
-                      <span v-if="!acceso.portatil && !acceso.vehiculo" class="text-theme-secondary">-</span>
-                    </div>
-                  </td>
-                  <td class="px-3 py-2">
-                    <span 
-                      :class="{
-                        'bg-green-100 text-green-800': acceso.estado === 'activo',
-                        'bg-gray-100 text-gray-800': acceso.estado === 'finalizado',
-                        'bg-red-100 text-red-800': acceso.estado === 'incidencia'
-                      }"
-                      class="inline-flex px-2 py-0.5 text-xs font-medium rounded-full"
-                    >
-                      {{ acceso.estado === 'activo' ? 'Activo' : acceso.estado === 'finalizado' ? 'Fin' : 'Inc' }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div v-if="!historialRecienteActual?.length" class="text-center py-4 text-theme-secondary text-xs">
-            <Icon name="file-text" :size="24" class="mx-auto mb-1 opacity-50" />
-            <p>Sin registros del día</p>
-          </div>
           </div>
         </div>
       </div>
@@ -768,31 +807,31 @@ onUnmounted(() => {
       <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="cerrarModal"></div>
 
       <!-- Contenido del modal -->
-      <div class="relative bg-theme-card border-2 border-theme-primary rounded-xl shadow-2xl max-w-md w-full transform transition-all">
-        <div class="p-4">
+      <div class="relative bg-theme-card border-2 border-theme-primary rounded-xl shadow-2xl max-w-lg w-full transform transition-all">
+        <div class="p-6">
           <!-- Header con icono -->
-          <div class="flex items-center gap-3 mb-3">
-            <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
-              <Icon name="user" :size="20" class="text-blue-600" />
+          <div class="flex items-center gap-4 mb-4">
+            <div class="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-xl bg-blue-700">
+              <Icon name="user" :size="28" class="text-white" />
             </div>
-            <h3 class="text-base font-bold text-theme-primary">Confirmar Acceso</h3>
+            <h3 class="text-xl font-bold text-theme-primary">Confirmar Acceso</h3>
           </div>
 
-          <div v-if="personaInfo" class="space-y-3">
+          <div v-if="personaInfo" class="space-y-4">
             <!-- Información de la persona -->
-            <div class="bg-theme-secondary border border-theme-primary rounded-lg p-3">
+            <div class="bg-theme-secondary border border-theme-primary rounded-xl p-4">
               <div class="text-center">
-                <h4 class="text-base font-bold text-theme-primary">{{ personaInfo.persona?.Nombre }}</h4>
-                <p class="text-xs text-theme-secondary mt-1">{{ personaInfo.persona?.TipoPersona }} • {{ personaInfo.persona?.documento }}</p>
+                <h4 class="text-lg font-bold text-theme-primary">{{ personaInfo.persona?.Nombre }}</h4>
+                <p class="text-sm text-theme-secondary mt-2">{{ personaInfo.persona?.TipoPersona }} • {{ personaInfo.persona?.documento }}</p>
               </div>
             </div>
 
             <!-- Estado del acceso -->
-            <div class="text-center p-3 rounded-lg" :class="personaInfo.tiene_acceso_activo ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'">
-              <div class="text-3xl mb-1">
+            <div class="text-center p-5 rounded-xl" :class="personaInfo.tiene_acceso_activo ? 'bg-red-50 text-red-800' : 'bg-blue-50 text-blue-800'">
+              <div class="text-5xl mb-2">
                 {{ personaInfo.tiene_acceso_activo ? '🚪➡️' : '🚪⬅️' }}
               </div>
-              <p class="font-bold text-sm">
+              <p class="font-bold text-base">
                 {{ personaInfo.tiene_acceso_activo ? 'REGISTRAR SALIDA' : 'REGISTRAR ENTRADA' }}
               </p>
             </div>
@@ -811,12 +850,12 @@ onUnmounted(() => {
         </div>
 
         <!-- Botones de acción -->
-        <div class="bg-theme-secondary px-4 py-3 flex gap-2 border-t border-theme-primary">
+        <div class="bg-theme-secondary px-6 py-4 flex gap-3 border-t border-theme-primary">
           <button
             @click="cerrarModal"
             :disabled="isProcessing"
             type="button"
-            class="flex-1 px-4 py-2 bg-theme-card border border-theme-primary text-sm font-medium text-theme-primary hover:bg-theme-tertiary disabled:opacity-50 transition-colors rounded-lg touch-manipulation"
+            class="flex-1 px-5 py-3 bg-theme-card border-2 border-theme-primary text-base font-semibold text-theme-primary hover:bg-theme-tertiary disabled:opacity-50 transition-colors rounded-lg touch-manipulation"
           >
             Cancelar
           </button>
@@ -824,11 +863,11 @@ onUnmounted(() => {
             @click="confirmarAcceso"
             :disabled="isProcessing"
             type="button"
-            class="flex-1 px-4 py-2 text-sm font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg touch-manipulation active:scale-95 transition-all"
-            :class="personaInfo?.tiene_acceso_activo ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+            class="flex-1 px-5 py-3 text-base font-bold text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg touch-manipulation active:scale-95 transition-all shadow-md"
+            :class="personaInfo?.tiene_acceso_activo ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-700 hover:bg-blue-800'"
           >
-            <Icon v-if="isProcessing" name="loader" :size="14" class="inline animate-spin mr-1" />
-            {{ isProcessing ? 'Procesando...' : (personaInfo?.tiene_acceso_activo ? 'SALIDA' : 'ENTRADA') }}
+            <Icon v-if="isProcessing" name="loader" :size="18" class="inline animate-spin mr-2" />
+            {{ isProcessing ? 'Procesando...' : (personaInfo?.tiene_acceso_activo ? 'CONFIRMAR SALIDA' : 'CONFIRMAR ENTRADA') }}
           </button>
         </div>
       </div>
@@ -862,3 +901,30 @@ onUnmounted(() => {
     />
   </SystemLayout>
 </template>
+
+<style scoped>
+/* Custom scrollbar para los contenedores */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1d4ed8;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #1e40af;
+}
+
+/* Para Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1d4ed8 rgba(0, 0, 0, 0.05);
+}
+</style>

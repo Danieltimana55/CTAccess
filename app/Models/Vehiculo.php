@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vehiculo extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActivityLog, SoftDeletes;
     
     protected $fillable = ['persona_id', 'tipo', 'placa', 'qrCode'];
 

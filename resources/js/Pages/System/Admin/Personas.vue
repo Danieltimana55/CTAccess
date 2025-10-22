@@ -2,7 +2,7 @@
 import SystemLayout from '@/Layouts/System/SystemLayout.vue'
 import Modal from '@/Components/Modal.vue'
 import Icon from '@/Components/Icon.vue'
-import { Head, router, useForm } from '@inertiajs/vue3'
+import { Head, router, useForm, Link } from '@inertiajs/vue3'
 import { ref, onMounted, reactive, computed } from 'vue'
 import axios from 'axios'
 
@@ -208,14 +208,25 @@ onMounted(() => {
           </div>
           <h2 class="text-lg sm:text-xl font-bold text-theme-primary">Gestión de Personas</h2>
         </div>
-        <button
-          @click="openCreateModal"
-          class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-sena-green-600 hover:bg-sena-green-700 active:bg-sena-green-800 dark:bg-blue-600 dark:hover:bg-blue-500 dark:active:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium touch-manipulation"
-        >
-          <Icon name="user-plus" class="w-4 h-4" />
-          <span class="hidden sm:inline">Nueva Persona</span>
-          <span class="sm:hidden">Nueva</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <Link
+            :href="route('system.admin.personas.import-export.index')"
+            class="inline-flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg transition-colors text-sm font-medium touch-manipulation"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span class="hidden sm:inline">Import/Export</span>
+          </Link>
+          <button
+            @click="openCreateModal"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-sena-green-600 hover:bg-sena-green-700 active:bg-sena-green-800 dark:bg-blue-600 dark:hover:bg-blue-500 dark:active:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium touch-manipulation"
+          >
+            <Icon name="user-plus" class="w-4 h-4" />
+            <span class="hidden sm:inline">Nueva Persona</span>
+            <span class="sm:hidden">Nueva</span>
+          </button>
+        </div>
       </div>
     </template>
 

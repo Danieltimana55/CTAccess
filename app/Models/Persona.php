@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
 class Persona extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasActivityLog, SoftDeletes;
     
     protected $primaryKey = 'idPersona';
     protected $fillable = ['documento', 'Nombre', 'TipoPersona', 'jornada_id', 'programa_formacion_id', 'qrCode', 'correo', 'contraseña'];

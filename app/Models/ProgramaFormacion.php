@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
 class ProgramaFormacion extends Model
 {
-    use HasFactory;
+    use HasFactory, HasActivityLog, SoftDeletes;
     
     protected $table = 'programas_formacion';
     

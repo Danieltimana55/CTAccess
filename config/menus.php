@@ -34,6 +34,11 @@ return [
                 'route' => 'system.admin.historial.index',
             ],
             [
+                'label' => 'Auditoría',
+                'icon'  => 'heroicon-m-clipboard-document-list',
+                'route' => 'system.admin.activity-logs.index',
+            ],
+            [
                 'label' => 'Gestión de Usuarios',
                 'icon'  => 'heroicon-m-user-cog',
                 'route' => 'system.admin.users.index',
@@ -57,6 +62,11 @@ return [
                 'label' => 'Programas de Formación',
                 'icon'  => 'heroicon-m-academic-cap',
                 'route' => 'system.admin.programas-formacion.index',
+            ],
+            [
+                'label' => 'Papelera',
+                'icon'  => 'heroicon-m-trash',
+                'route' => 'system.admin.papelera.index',
             ],
         ],
         'celador' => [
